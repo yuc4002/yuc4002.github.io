@@ -1,0 +1,741 @@
+---
+title: "Intro to ggplot2: A grammar for graphics"
+---
+
+### Introducation
+
+`ggplot2` is a graphing library in R that makes beautiful graphs. It is a R package created by R programmer Hadley Wickham. ggplot2 one of the most widely used R packages. Moreover, it builds data graphics incrementally from small pieces of code.
+
+
+The first time you want to use a package, you need to install it. To do so, you type:
+```{r  eval=F}
+install.packages('ggplot2')
+```
+
+You then need to activate by executing the command:
+```{r  eval=F}
+library(ggplot2)
+```
+
+Each time you start an R session you will need to activate the package(s) you need, but you don’t need
+to install them again. 
+
+
+### Data Applied
+
+We will be using the data set CIACountries from the `mdsr` package. First, we have to `intall` and `library` the `mdsr` package.
+
+```{r eval=F}
+install.packages('mdsr')
+```
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(mdsr)
+```
+
+
+The CIACountries data table contains the following seven variables for 236 countries:
+
++ population (pop)
++ area (area)
++ gross domestic product (gdp)
++ percentage of GDP spent on education (educ)
++ length of roadways per unit area (roadways)
++ internet use as a fraction of the population (net_users)
++ number of barrels of oil produced per day (oil_prod)
+
+We can apply the `head` function to havea a look of the CIACountries data table. The `%>%knitr::kable()` command just make is part of table looks better than before.
+
+```{r}
+head(CIACountries) %>% knitr::kable()
+```
+
+### 1.ggplot Syntax
+
+Unlike base graphics, ggplot works with dataframes and not individual vectors. The `ggplot()`command creates a plot, with the argument data telling us which data to use. The `aes()` command within ggplot() indicates the desired x and
+y variables.
+
+```{r fig.height=3.5, fig.width=4}
+ggplot(data = CIACountries, aes(y=gdp, x = educ))
+```
+
+Although datafram, x and y are specified, there are no points or lines in it. This is because I have only told ggplot what dataset to use and what columns should be used for X and Y axis. I haven’t explicitly asked it to draw any points.
+
+
+>___The following are the Geoms( Bars, lines, text, points) options to apply on the plot___
+
++ `geom_bar()` : creates a layer with bars representing different statistical properties
++ `geom_point()` : creates a layer with data points (as on a scatterplot)
++ `geom_line()` : creates a layer with a straight line
++ `geom_smooth()` : creates a layer with a ‘smoother’ (a line that summarizes the data as a whole rather than connecting individual points)
++ `geom_histogram()` : creates a layer with a histogram
++ `geom_boxplot()` : creates a layer with a box-whisker diagram
++ `geom_text()` : creates a layer with text in it
++ `geom_errorbar()` : creates a layer with error bars in it
++ `geom_hline()` and `geom_vline()` : creates a layer with a user-defined horizontal or vertical line respectively.
+
+<br>
+
+### 2. Scatter plot
+
+#### 2.1 Basic Scatter plot
+
+Let’s make a scatterplot by adding points using a geom layer called `geom_point`. The `color`, `size` and `shape` can be applied to in the `geom_point` to change the color, size and shape of the points in scatter plot
+
+```{r eval=F}
+# Basic Scatter plot
+ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point()
+
+# Change the point color
+ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point(color="steelblue")
+
+# Change the point size, and shape
+ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point(size=2, shape=23)
+```
+```{r echo=FALSE, fig.height=3.5, fig.width=10,message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point()
+
+# Change the point color
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point(color="steelblue")
+
+# Change the point size, and shape
+p3 <- ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point(size=2, shape=23)
+
+grid.arrange(p1, p2, p3, ncol=3)
+```
+
+#### 2.2 Change the point color/size automatically
+
+The command `size`, `shape` and `color` are used to set size, shape and color vary based on state categories. Users can decide to set one, two or all of them.
+
+`guide_legend(title="")` is used to add the legend name. If size has been set to vary based on state categories, the command of add legend name is `size=guide_legend(title="")`. If color has been set to vary based on state categories, the command of add legend name is `color=guide_legend(title="")`.
+
+```{r eval=F}
+# Change the point size
+ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_point(aes(size = roadways)) +
+  guides(size=guide_legend(title="Roadway"))
+
+# Change the point size and coloe
+ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_point(aes(color = net_users, size = roadways)) +
+  guides(color=guide_legend(title="Internet Use"), size=guide_legend(title='Roadway'))
+```
+
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# Change the point size
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_point(aes(size = roadways)) +
+  guides(size=guide_legend(title="Roadway"))
+
+# Change the point size and coloe
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_point(aes(color = net_users, size = roadways)) +
+  guides(color=guide_legend(title="Internet Use"), size=guide_legend(title='Roadway'))
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+#### 2.3 Label points in the scatter plot
+
+The function `geom_text()` can be used :
+
+```{r fig.height=3.5, fig.width=5.5,message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_text(aes(label = country), size = 3) 
+```
+
+#### 2.4.1 Add regression lines
+
+The functions `geom_smooth()` can be used to add regression lines to a scatter plot 
+
+```{r eval=F}
+geom_smooth(method="auto", se=TRUE, fullrange=FALSE, level=0.95)
+```
+
++ `method`: smoothing method to be used. Possible values are lm, glm, gam, loess, rlm. The default value is loess.
++ `se`: If TRUE, confidence interval is displayed around smooth.
++ `fullrange`: If TRUE, the fit spans the full range of the plot
++ `level`: level of confidence interval to use. Default value is 0.95
+
+```{r eval=F}
+# Add the regression line
+ggplot(data = CIACountries, aes(y=gdp, x = educ))  +  geom_point()+
+  geom_smooth(method=lm)
+
+# Remove the confidence interval
+ggplot(data = CIACountries, aes(y=gdp, x = educ))  +  geom_point()+
+  geom_smooth(method=lm, se=FALSE)
+```
+
+```{r  echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+# Add the regression line
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = educ))  +  geom_point()+
+  geom_smooth(method=lm)
+
+# Remove the confidence interval
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = educ))  +  geom_point()+
+  geom_smooth(method=lm, se=FALSE)
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+#### 2.4.2 Change the points and lines
+
+`shape` and `color` in the ` geom_point()` can chance the color of shape of the points in scatter plot. `color` and `linetype` in the ` geom_smooth()` can change color and linetype of the line.
+
+```{r fig.height=3.5, fig.width=5.5,message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data = CIACountries, aes(y=gdp, x = educ))  +  geom_point(shape=10, color="steelblue")+
+  geom_smooth(method=lm,se=FALSE, linetype="dashed", color="orange")
+```
+
+#### 2.4.3 Multiple regression lines
+
+In the scatter plot, users can plot more than one regression line in the plot by the following code. User need to set color change automatically by the command `color`. Then user need to have the command `geom_smooth()` to add the regression lines. Then there would be multiple regression lines in one graph.
+
+Command set `fullrange` equals TRUE can extend the regression lines in the graph.
+
+```{r eval=F}
+ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  + 
+  geom_point()+
+  geom_smooth(method=lm)+
+  guides(color=guide_legend(title="Internet Use"))
+
+# Remove confidence intervals
+# Extend the regression lines
+ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  + 
+  geom_point()+
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+  guides(color=guide_legend(title="Internet Use"))
+```
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  + 
+  geom_point()+
+  geom_smooth(method=lm)+
+  guides(color=guide_legend(title="Internet Use"))
+
+# Remove confidence intervals
+# Extend the regression lines
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  + 
+  geom_point()+
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+  guides(color=guide_legend(title="Internet Use"))
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+#### 2.5.1 Change the point color/size manually
+
+In previous section, if there exist multiple regression lines in the graph, the color and points would change automatically. The following command can set the color, size and shape manually:
+
++ `scale_shape_manual()`: for changeing point shapes manually
++ `scale_color_manual()`: for changeing point colors manually
++ `scale_size_manual()`: for changeing point sizes manually
+
+The following example shows how to set the point and line color and size manually.
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  + 
+  geom_point()+
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+  guides(color=guide_legend(title="Internet Use"))+
+  scale_color_manual(values=c('#999999','#E69F00', '#56B4E9','#0072B2', '#D55E00', '#CC79A7'))+
+  scale_size_manual(values=c(1,2,3,4,5))
+```
+
+
+#### 2.5.2 Change the point color/size manually by color group
+
+It is also possible to change manually point and line colors using the functions :
+
++ `scale_color_brewer()` : to use color palettes from RColorBrewer package
++ `scale_color_grey()` : to use grey color palettes
+
+```{r eval=F}
+# Use brewer color palettes
+ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  + 
+  geom_point()+
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+  guides(color=guide_legend(title="Internet Use"))+
+  scale_color_brewer(palette="Dark2")
+
+# Use grey scale
+ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  + 
+  geom_point()+
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+  guides(color=guide_legend(title="Internet Use"))+
+  scale_color_grey()
+```
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# Use brewer color palettes
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  + 
+  geom_point()+
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+  guides(color=guide_legend(title="Internet Use"))+
+  scale_color_brewer(palette="Dark2")
+
+# Use grey scale
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  + 
+  geom_point()+
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+  guides(color=guide_legend(title="Internet Use"))+
+  scale_color_grey()
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+
+### 3. Box plot
+
+#### 3.1 Basic Box plot
+
+Let’s make a box plot by adding command `geom_boxplot()`. Set `notch` equals TRUE can change the shape of the box plot. 
+
+```{r eval=F}
+# Basic box plot
+ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()
+
+# Notched box plot
+ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(notch=TRUE)
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# Basic box plot
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()
+
+# Notched box plot
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(notch=TRUE)
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+
+#### 3.2 Change Outlier and add mean points to a box plot
+
+`geom_boxplot()` allowed user to change color, shape and zie of the outlier points by the following commands.
+
++ `outlier.shape()`: for changeing outlier point shapes manually
++ `outlier.colour()`: for changeing outlier point colors manually
++ `outlier.size()`: for changeing outlier point sizes manually
+
+The command `stat_summary()` can be used to add mean points to a box plot
+
+```{r eval=F}
+# Change outlier, color, shape and size
+ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+  geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=4)
+
+# add mean points to a box plot
+ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+  stat_summary(fun.y=mean, geom="point", shape=23, size=4)
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# Change outlier, color, shape and size
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+  geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=4)
+
+# add mean points to a box plot
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+  stat_summary(fun.y=mean, geom="point", shape=23, size=4)
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+
+#### 3.3 Box plot with dots
+
+The points can be added to box plot by comman `geom_dotplot()` and `geom_jitter()`.
+
+```{r eval=F}
+# Box plot with dot plot
+ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.3)
+
+# Box plot with jittered points
+# 0.2 : degree of jitter in x direction
+ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+  geom_jitter(shape=16, position=position_jitter(0.2))
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# Box plot with dot plot
+p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=0.3)
+
+# Box plot with jittered points
+# 0.2 : degree of jitter in x direction
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+  geom_jitter(shape=16, position=position_jitter(0.2))
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+
+#### 3.4 Select item to display
+
+The command `scale_x_discrete()` can use to select the box to display on the boxplot. 
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+  scale_x_discrete(limits=c(">0%", ">15%", ">35%"))
+```
+
+
+#### 3.5.1 Change box plot colors automatically
+
+The command `color` is used to set the line color of box plot vary based on state categories.\\
+The command `fill` is used to set the box color of box plot vary based on state categories.
+
+```{r eval=F}
+# Change box plot line colors by groups
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, color=net_users)) + geom_boxplot()
+
+# Change box plot colors by groups
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# Change box plot line colors by groups
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, color=net_users)) + geom_boxplot()
+
+# Change box plot colors by groups
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+#### 3.5.2 Change box plot colors manually
+
+The command `color` is used to set the line color of box plot.\\
+The command `fill` is used to set the box color of box plot.\\ 
+The command `scale_fill_manual` is used to set the box color of of each box.
+
+```{r eval=F}
+# Use single color
+ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(fill="steelblue", color="black")
+
+# Use custom color palettes
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
+  scale_fill_manual(values=c('#999999','#E69F00', '#56B4E9','#0072B2', '#D55E00', '#CC79A7'))
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# Use single color
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(fill="steelblue", color="black")
+
+# Use custom color palettes
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
+  scale_fill_manual(values=c('#999999','#E69F00', '#56B4E9','#0072B2', '#D55E00', '#CC79A7'))
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+
+__It is also possible to change manually point and line colors using the functions :__
+
++ `scale_color_brewer()` : to use color palettes from RColorBrewer package
++ `scale_color_grey()` : to use grey color palettes
+
+```{r eval=F}
+# use Blues color palettes
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  scale_fill_brewer(palette="Blues") 
+
+# Use grey scale
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  scale_fill_grey() + theme_classic() 
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# use brewer color palettes
+p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  scale_fill_brewer(palette="Blues") 
+
+# Use grey scale
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  scale_fill_grey() 
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+
+
+### 4. Change Legend
+
+#### 4.1 Change Legend Position
+
+The command `theme(legend.position="")` can be used to set the position of the legend. The legend also can be removed by this command.
+
+```{r eval=F}
+# Move the legend to top
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.position="top")
+
+# Move the legend to bottom
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.position="bottom")
+
+# Remove legend
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.position="none")
+```
+
+```{r echo=FALSE, fig.height=3.5, fig.width=10,message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# Move the legend to top
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
+  theme(legend.position="top")
+
+# Move the legend to bottom
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
+  theme(legend.position="bottom")
+
+# Remove legend
+p3 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
+  theme(legend.position="none")
+
+grid.arrange(p1, p2, p3, ncol=3)
+```
+
+__Move the legend manually__
+
+The command `legend.justification` and `legend.position` can set the position of the legend manually. x,y is 0,0 (bottom left) to 1,1 (top right).
+
+
+```{r eval=F}
+# Put legend manually 
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.justification=c(0,0), legend.position=c(.5, .5))
+
+# Put bottom-right corner of legend box in bottom-right corner of graph
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.justification=c(1,0), legend.position=c(1,0))
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.justification=c(0,0), legend.position=c(.5, .5))
+
+# Put bottom-right corner of legend box in bottom-right corner of graph
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.justification=c(1,0), legend.position=c(1,0))
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+
+
+#### 4.2 Reverse the legend order
+
+The following command can reverse the legend order :
+
++ `guides(fill = guide_legend(reverse=TRUE))`
++ `scale_fill_discrete(guide = guide_legend(reverse=TRUE))`
+
+```{r eval=F}
+# first menthod to reverse the legend order
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  guides(fill = guide_legend(reverse=TRUE))
+
+# second menthod to reverse the legend order
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  scale_fill_discrete(guide = guide_legend(reverse=TRUE))
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# first menthod to reverse the legend order
+p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  guides(fill = guide_legend(reverse=TRUE))
+
+# second menthod to reverse the legend order
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  scale_fill_discrete(guide = guide_legend(reverse=TRUE))
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+#### 4.3 Modifying the text of legend titles and labels
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  # Using a manual scale instead 
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9","#0072B2", "#D55E00", "#CC79A7"), 
+                    name="Internet use \nPercentage",
+                    breaks=c(">0%", ">5%", ">25%", ">35%", ">60%", "NA"),
+                    labels=c(">0%", ">5%", ">25%", ">35%", ">60%", ""))
+```
+
+
+#### 4.4 Modifying the legend box
+
+```{r eval=F}
+# Remove the background of the ledgend box
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.background = element_rect())
+
+# Change part of the color inside the legend
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.background = element_rect(fill="gray90", size=.5, linetype="dotted"))
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# Remove the background of the ledgend box
+p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.background = element_rect())
+
+# Change part of the color inside the legend
+p2 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.background = element_rect(fill="gray90", size=.5, linetype="dotted"))
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+#### 4.5 Modifying legend title and labels
+
+The following command change the text style of legend.
+
++ `legend.title = element_text()` : legend title.
++ `legend.text = element_text()` : legend categories.
+
+The detial of __Formatting choices__ will be explain in __5.1__.
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+  theme(legend.title = element_text(colour="blue", size=16, face="bold"),
+        legend.text = element_text(colour="red", size = 14, face = "bold"))
+```
+
+### 5.Set Layout
+
+#### 5.1 Change the Title and Axis Labels
+
+There are two ways to change the Title and Axis Labels
+
++ `ylab`, `xlab` and `ggtitle` 
++ `labs(y='  ', x='  ', title='  ')`
+
+```{r eval=F}
+# first method to change the Title and Axis Labels
+ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
+  ylab('Gross Domestic Product') +
+  xlab('Percentage of Gross Domestic \n Product Spent on Education') +
+  ggtitle('Gross Domestic Product and Education')
+
+# second method to change the Title and Axis Labels
+ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
+  labs(y='Domestic Product',
+       x='Percentage of Product Spent on Education',
+       title= 'Domestic Product and Education')
+```
+
+```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
+require(gridExtra)
+
+# first method to change the Title and Axis Labels
+p1 <- ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
+  ylab('Gross Domestic Product') +
+  xlab('Percentage of Gross Domestic \n Product Spent on Education') +
+  ggtitle('Gross Domestic Product and Education')
+
+# second method to change the Title and Axis Labels
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
+  labs(y='Domestic Product',
+       x='Percentage of Product Spent on Education',
+       title= 'Domestic Product and Education')
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+
+#### 5.2 Altering the text style of axis or title
+
+The following command change the text style of axis and title
+
++ `plot.title = element_text()` : plot title.
++ `axis.title = element_text()` : axis title. 
++ `axis.text = element_text()` : appearance of axis values/numbers.
+
+__Formatting choices__ The font, colour, size and emphasis of any of these labels can be altered by arguments within element_text(your format).
+
++ family: the font style. Examples of fonts include: “Palatino”, “Helvetica”, “Courier”, “Times”. For example, family = "Palatino"
++ face: the type of emphasis, with options including bold, italic and “bold.italic”. For example, face = "bold.italic"
++ colour: the colour can be changed to any of the colours listed here. For example, colour = "steelblue2".
++ size: the size of the text. For example, size = (3).
+
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+# first method to change the Title and Axis Labels
+ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
+  ylab('Gross Domestic Product') +
+  xlab('Percentage of Gross Domestic \n Product Spent on Education') +
+  ggtitle('Gross Domestic Product and Education')+
+  theme(axis.text=element_text(colour="blue", size=10), # change x and y label words
+        axis.title=element_text(colour="orange", size=12, face="bold"), # change x-axis and y-axis title words
+        plot.title=element_text(colour="red", size=15, face="bold")) # change title words size
+
+```
+
+#### 5.3 Removing a label
+
+The command `element_blank()`, the following example remove the title and axis. This command also can remove the tiltle of legend. 
+
+```{r fig.height=3.5, fig.width=4, message=FALSE, warning=FALSE, paged.print=FALSE}
+# first method to change the Title and Axis Labels
+ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
+  ylab('Gross Domestic Product') +
+  xlab('Percentage of Gross Domestic \n Product Spent on Education') +
+  ggtitle('Gross Domestic Product and Education')+
+  theme(axis.text= element_blank(),
+        axis.title= element_blank(),
+        plot.title= element_blank())    
+
+```
+
+
+#### 5.4 Scale
+
+The `coord_trans()` function can put data on a logarithmic scale. A logarithmic scale would make the plot much more readable.
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data = CIACountries, aes(y=gdp, x = educ)) +
+geom_point() +
+guides(color=guide_legend(title="Internet Use"),
+size=guide_legend(title='Roadway')) +
+coord_trans(y = "log10")
+```
+
+#### 5.5 Facets
+
+The command `facet_wrap()` can split one graph to mutiple by one character. The following is an example of using `facet_wrap()` function.
+
+```{r fig.height=4, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data = CIACountries, aes(y=gdp, x = educ)) +
+geom_point() +
+guides(color=guide_legend(title="Internet Use"),
+size=guide_legend(title='Roadway')) +
+facet_wrap(~net_users, nrow = 1)
+```

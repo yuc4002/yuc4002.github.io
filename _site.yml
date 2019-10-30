@@ -1,0 +1,18 @@
+name: "Yu Cai"
+output_dir: "."
+navbar:
+  title: "Yu Cai"
+  left:
+    - text: "Intro to ggplot2"
+      href: ggplot2.html
+  right:
+    - icon: fa-envelope fa-lg
+      href: mailto:<yuc4002@med.cornell.edu>
+    - icon: fa-github fa-lg
+      href: http://github.com/yuc4002/
+    - icon: fa-twitter fa-lg 
+      href: https://twitter.com/YuCai22332658
+output:
+  html_document
+  
+  

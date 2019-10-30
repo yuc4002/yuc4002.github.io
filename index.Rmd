@@ -1,0 +1,15 @@
+
+<h1>Yu Cai</h1>
+
+<h3 style="color:grey;"> <i>Weill Cornell Medicine</i></h3>
+
+<br>
+
+<img src="images/yu_c.jpg" alt="yucai" style="width:25%" >
+
+<br>
+
+
+I obtained a BA in Mathematics and Bs in Economics from Hobart and William Smith Colleges in 2017. Then I worked one year as the Only Math Intern in Math department at Hobart and William Smith Colleges. I recently joined the Weill Cornell Medicine with a MS in biostatistics and Data Science in 2019.
+
+My full CV is available [here](files/Yu_Cai_CV.pdf).

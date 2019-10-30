@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -19,6 +20,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -85,7 +89,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -246,20 +249,65 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
 
 
 
@@ -269,6 +317,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -324,7 +382,7 @@ $(document).ready(function () {
 
 <div id="introducation" class="section level3">
 <h3>Introducation</h3>
-<p><code>ggplot2</code> is a graphing library in R that makes beautiful graphs. It is a R package created by R programmer Hadley Wickham. ggplot2 one of the most widely used R packages. Moreover, it builds data graphics incrementally from small pieces of code.</p>
+<p><code>ggplot2</code> is a graphing library in R that makes beautiful graphs. It is a R package created by R programmer Hadley Wickham. ggplot2 is one of the most widely used R packages. Moreover, it builds data graphics incrementally from small pieces of code.</p>
 <p>The first time you want to use a package, you need to install it. To do so, you type:</p>
 <pre class="r"><code>install.packages(&#39;ggplot2&#39;)</code></pre>
 <p>You then need to activate by executing the command:</p>
@@ -424,12 +482,68 @@ $(document).ready(function () {
 </tr>
 </tbody>
 </table>
+<p>The ToothGrowth data table contains the following seven variables for 60 guinea pigs:</p>
+<ul>
+<li>Tooth length (len)</li>
+<li>Supplement type (supp)</li>
+<li>Dose in milligrams/day (dose)</li>
+</ul>
+<pre class="r"><code>data(&quot;ToothGrowth&quot;)
+
+# Load data and convert dose to a factor variable
+ToothGrowth$dose &lt;- as.factor(ToothGrowth$dose)
+
+# add a outlier to the dataset
+ToothGrowth[1,1] &lt;- 60
+
+head(ToothGrowth) %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">len</th>
+<th align="left">supp</th>
+<th align="left">dose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">60.0</td>
+<td align="left">VC</td>
+<td align="left">0.5</td>
+</tr>
+<tr class="even">
+<td align="right">11.5</td>
+<td align="left">VC</td>
+<td align="left">0.5</td>
+</tr>
+<tr class="odd">
+<td align="right">7.3</td>
+<td align="left">VC</td>
+<td align="left">0.5</td>
+</tr>
+<tr class="even">
+<td align="right">5.8</td>
+<td align="left">VC</td>
+<td align="left">0.5</td>
+</tr>
+<tr class="odd">
+<td align="right">6.4</td>
+<td align="left">VC</td>
+<td align="left">0.5</td>
+</tr>
+<tr class="even">
+<td align="right">10.0</td>
+<td align="left">VC</td>
+<td align="left">0.5</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="ggplot-syntax" class="section level3">
 <h3>1.ggplot Syntax</h3>
 <p>Unlike base graphics, ggplot works with dataframes and not individual vectors. The <code>ggplot()</code>command creates a plot, with the argument data telling us which data to use. The <code>aes()</code> command within ggplot() indicates the desired x and y variables.</p>
 <pre class="r"><code>ggplot(data = CIACountries, aes(y=gdp, x = educ))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-6-1.png" width="384" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-7-1.png" width="384" /></p>
 <p>Although datafram, x and y are specified, there are no points or lines in it. This is because I have only told ggplot what dataset to use and what columns should be used for X and Y axis. I haven’t explicitly asked it to draw any points.</p>
 <blockquote>
 <p><strong><em>The following are the Geoms( Bars, lines, text, points) options to apply on the plot</em></strong></p>
@@ -460,7 +574,7 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point(color=&quot;steel
 
 # Change the point size, and shape
 ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point(size=2, shape=23)</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-8-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-9-1.png" width="960" /></p>
 </div>
 <div id="change-the-point-colorsize-automatically" class="section level4">
 <h4>2.2 Change the point color/size automatically</h4>
@@ -473,13 +587,13 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_point(aes(size = roadw
 # Change the point size and coloe
 ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_point(aes(color = net_users, size = roadways)) +
   guides(color=guide_legend(title=&quot;Internet Use&quot;), size=guide_legend(title=&#39;Roadway&#39;))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-10-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-11-1.png" width="960" /></p>
 </div>
 <div id="label-points-in-the-scatter-plot" class="section level4">
 <h4>2.3 Label points in the scatter plot</h4>
 <p>The function <code>geom_text()</code> can be used :</p>
 <pre class="r"><code>ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_text(aes(label = country), size = 3) </code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-11-1.png" width="528" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-12-1.png" width="528" /></p>
 </div>
 <div id="add-regression-lines" class="section level4">
 <h4>2.4.1 Add regression lines</h4>
@@ -498,14 +612,14 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ))  +  geom_point()+
 # Remove the confidence interval
 ggplot(data = CIACountries, aes(y=gdp, x = educ))  +  geom_point()+
   geom_smooth(method=lm, se=FALSE)</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-14-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-15-1.png" width="960" /></p>
 </div>
 <div id="change-the-points-and-lines" class="section level4">
 <h4>2.4.2 Change the points and lines</h4>
 <p><code>shape</code> and <code>color</code> in the <code>geom_point()</code> can chance the color of shape of the points in scatter plot. <code>color</code> and <code>linetype</code> in the <code>geom_smooth()</code> can change color and linetype of the line.</p>
 <pre class="r"><code>ggplot(data = CIACountries, aes(y=gdp, x = educ))  +  geom_point(shape=10, color=&quot;steelblue&quot;)+
   geom_smooth(method=lm,se=FALSE, linetype=&quot;dashed&quot;, color=&quot;orange&quot;)</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-15-1.png" width="528" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-16-1.png" width="528" /></p>
 </div>
 <div id="multiple-regression-lines" class="section level4">
 <h4>2.4.3 Multiple regression lines</h4>
@@ -522,7 +636,7 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  +
   geom_point()+
   geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
   guides(color=guide_legend(title=&quot;Internet Use&quot;))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-17-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-18-1.png" width="960" /></p>
 </div>
 <div id="change-the-point-colorsize-manually" class="section level4">
 <h4>2.5.1 Change the point color/size manually</h4>
@@ -539,7 +653,7 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  +
   guides(color=guide_legend(title=&quot;Internet Use&quot;))+
   scale_color_manual(values=c(&#39;#999999&#39;,&#39;#E69F00&#39;, &#39;#56B4E9&#39;,&#39;#0072B2&#39;, &#39;#D55E00&#39;, &#39;#CC79A7&#39;))+
   scale_size_manual(values=c(1,2,3,4,5))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-18-1.png" width="480" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-19-1.png" width="480" /></p>
 </div>
 <div id="change-the-point-colorsize-manually-by-color-group" class="section level4">
 <h4>2.5.2 Change the point color/size manually by color group</h4>
@@ -561,7 +675,7 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  +
   geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
   guides(color=guide_legend(title=&quot;Internet Use&quot;))+
   scale_color_grey()</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-20-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-21-1.png" width="960" /></p>
 </div>
 </div>
 <div id="box-plot" class="section level3">
@@ -570,11 +684,11 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ, color=net_users))  +
 <h4>3.1 Basic Box plot</h4>
 <p>Let’s make a box plot by adding command <code>geom_boxplot()</code>. Set <code>notch</code> equals TRUE can change the shape of the box plot.</p>
 <pre class="r"><code># Basic box plot
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()
+ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()
 
 # Notched box plot
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(notch=TRUE)</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-22-1.png" width="960" /></p>
+ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot(notch=TRUE)</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-23-1.png" width="960" /></p>
 </div>
 <div id="change-outlier-and-add-mean-points-to-a-box-plot" class="section level4">
 <h4>3.2 Change Outlier and add mean points to a box plot</h4>
@@ -586,67 +700,73 @@ ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(notch=TRUE
 </ul>
 <p>The command <code>stat_summary()</code> can be used to add mean points to a box plot</p>
 <pre class="r"><code># Change outlier, color, shape and size
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+ggplot(data = ToothGrowth, aes(y=len, x = supp))) + geom_boxplot()+
   geom_boxplot(outlier.colour=&quot;red&quot;, outlier.shape=8, outlier.size=4)
 
 # add mean points to a box plot
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+ggplot(data = ToothGrowth, aes(y=len, x = supp))) + geom_boxplot()+
   stat_summary(fun.y=mean, geom=&quot;point&quot;, shape=23, size=4)</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-24-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-25-1.png" width="960" /></p>
 </div>
 <div id="box-plot-with-dots" class="section level4">
 <h4>3.3 Box plot with dots</h4>
 <p>The points can be added to box plot by comman <code>geom_dotplot()</code> and <code>geom_jitter()</code>.</p>
 <pre class="r"><code># Box plot with dot plot
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
   geom_dotplot(binaxis=&#39;y&#39;, stackdir=&#39;center&#39;, dotsize=0.3)
 
 # Box plot with jittered points
 # 0.2 : degree of jitter in x direction
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
   geom_jitter(shape=16, position=position_jitter(0.2))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-26-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-27-1.png" width="960" /></p>
 </div>
 <div id="select-item-to-display" class="section level4">
 <h4>3.4 Select item to display</h4>
 <p>The command <code>scale_x_discrete()</code> can use to select the box to display on the boxplot.</p>
-<pre class="r"><code>ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
-  scale_x_discrete(limits=c(&quot;&gt;0%&quot;, &quot;&gt;15%&quot;, &quot;&gt;35%&quot;))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-27-1.png" width="480" /></p>
+<pre class="r"><code>ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
+  scale_x_discrete(limits=c(&quot;OJ&quot;))</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-28-1.png" width="480" /></p>
 </div>
 <div id="change-box-plot-colors-automatically" class="section level4">
 <h4>3.5.1 Change box plot colors automatically</h4>
-<p>The command <code>color</code> is used to set the line color of box plot vary based on state categories.\ The command <code>fill</code> is used to set the box color of box plot vary based on state categories.</p>
+<p>The command <code>color</code> is used to set the line color of box plot vary based on state categories. The command <code>fill</code> is used to set the box color of box plot vary based on state categories.</p>
 <pre class="r"><code># Change box plot line colors by groups
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, color=net_users)) + geom_boxplot()
+ggplot(data = ToothGrowth, aes(y=len, x = supp color=supp)) + geom_boxplot()
 
 # Change box plot colors by groups
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-29-1.png" width="960" /></p>
+ggplot(data = ToothGrowth, aes(y=len, x = supp, fill=supp)) + geom_boxplot()</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-30-1.png" width="960" /></p>
+<blockquote>
+<p>Boxplot Side by side</p>
+</blockquote>
+<pre class="r"><code>ggplot(data = ToothGrowth, aes(x = dose, y = len)) + geom_boxplot(aes(fill = supp))</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-31-1.png" width="480" /></p>
 </div>
 <div id="change-box-plot-colors-manually" class="section level4">
 <h4>3.5.2 Change box plot colors manually</h4>
 <p>The command <code>color</code> is used to set the line color of box plot.\ The command <code>fill</code> is used to set the box color of box plot.\ The command <code>scale_fill_manual</code> is used to set the box color of of each box.</p>
 <pre class="r"><code># Use single color
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(fill=&quot;steelblue&quot;, color=&quot;black&quot;)
+ggplot(ToothGrowth, aes(x = dose, y = len)) + geom_boxplot(fill=&quot;steelblue&quot;, color=&quot;black&quot;)
 
 # Use custom color palettes
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
-  scale_fill_manual(values=c(&#39;#999999&#39;,&#39;#E69F00&#39;, &#39;#56B4E9&#39;,&#39;#0072B2&#39;, &#39;#D55E00&#39;, &#39;#CC79A7&#39;))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-31-1.png" width="960" /></p>
+ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c(&quot;#00AFBB&quot;, &quot;#E7B800&quot;))</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-33-1.png" width="960" /></p>
 <p><strong>It is also possible to change manually point and line colors using the functions :</strong></p>
 <ul>
 <li><code>scale_color_brewer()</code> : to use color palettes from RColorBrewer package</li>
 <li><code>scale_color_grey()</code> : to use grey color palettes</li>
 </ul>
 <pre class="r"><code># use Blues color palettes
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   scale_fill_brewer(palette=&quot;Blues&quot;) 
 
 # Use grey scale
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   scale_fill_grey() + theme_classic() </code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-33-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-35-1.png" width="960" /></p>
 </div>
 </div>
 <div id="change-legend" class="section level3">
@@ -655,74 +775,64 @@ ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_bo
 <h4>4.1 Change Legend Position</h4>
 <p>The command <code>theme(legend.position=&quot;&quot;)</code> can be used to set the position of the legend. The legend also can be removed by this command.</p>
 <pre class="r"><code># Move the legend to top
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.position=&quot;top&quot;)
 
 # Move the legend to bottom
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.position=&quot;bottom&quot;)
 
 # Remove legend
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.position=&quot;none&quot;)</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-35-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-37-1.png" width="960" /></p>
 <p><strong>Move the legend manually</strong></p>
 <p>The command <code>legend.justification</code> and <code>legend.position</code> can set the position of the legend manually. x,y is 0,0 (bottom left) to 1,1 (top right).</p>
 <pre class="r"><code># Put legend manually 
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.justification=c(0,0), legend.position=c(.5, .5))
 
 # Put bottom-right corner of legend box in bottom-right corner of graph
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.justification=c(1,0), legend.position=c(1,0))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-37-1.png" width="960" /></p>
-</div>
-<div id="reverse-the-legend-order" class="section level4">
-<h4>4.2 Reverse the legend order</h4>
-<p>The following command can reverse the legend order :</p>
-<ul>
-<li><code>guides(fill = guide_legend(reverse=TRUE))</code></li>
-<li><code>scale_fill_discrete(guide = guide_legend(reverse=TRUE))</code></li>
-</ul>
-<pre class="r"><code># first menthod to reverse the legend order
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  guides(fill = guide_legend(reverse=TRUE))
-
-# second menthod to reverse the legend order
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  scale_fill_discrete(guide = guide_legend(reverse=TRUE))</code></pre>
 <p><img src="ggplot2_files/figure-html/unnamed-chunk-39-1.png" width="960" /></p>
 </div>
-<div id="modifying-the-text-of-legend-titles-and-labels" class="section level4">
-<h4>4.3 Modifying the text of legend titles and labels</h4>
-<pre class="r"><code>ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  # Using a manual scale instead 
-  scale_fill_manual(values=c(&quot;#999999&quot;, &quot;#E69F00&quot;, &quot;#56B4E9&quot;,&quot;#0072B2&quot;, &quot;#D55E00&quot;, &quot;#CC79A7&quot;), 
-                    name=&quot;Internet use \nPercentage&quot;,
-                    breaks=c(&quot;&gt;0%&quot;, &quot;&gt;5%&quot;, &quot;&gt;25%&quot;, &quot;&gt;35%&quot;, &quot;&gt;60%&quot;, &quot;NA&quot;),
-                    labels=c(&quot;&gt;0%&quot;, &quot;&gt;5%&quot;, &quot;&gt;25%&quot;, &quot;&gt;35%&quot;, &quot;&gt;60%&quot;, &quot;&quot;))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-40-1.png" width="480" /></p>
-</div>
 <div id="modifying-the-legend-box" class="section level4">
-<h4>4.4 Modifying the legend box</h4>
+<h4>4.2 Modifying the legend box</h4>
 <pre class="r"><code># Remove the background of the ledgend box
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.background = element_rect())
 
 # Change part of the color inside the legend
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.background = element_rect(fill=&quot;gray90&quot;, size=.5, linetype=&quot;dotted&quot;))</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-42-1.png" width="960" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-41-1.png" width="960" /></p>
+</div>
+<div id="modifying-the-text-of-legend-titles-and-labels" class="section level4">
+<h4>4.3 Modifying the text of legend titles and labels</h4>
+<p>The <code>scale_fill_manual</code> command can change the color, legend titles and labels</p>
+<pre class="r"><code>ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+  # Using a manual scale instead 
+  scale_fill_manual(values=c(&quot;#999999&quot;, &quot;#E69F00&quot;), 
+                    name=&quot;Internet use \nPercentage&quot;,
+                    breaks=c(&quot;OJ&quot;, &quot;VC&quot;),
+                    labels=c(&quot;orange juice&quot;, &quot;vitamin C&quot;))</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-42-1.png" width="480" /></p>
 </div>
 <div id="modifying-legend-title-and-labels" class="section level4">
-<h4>4.5 Modifying legend title and labels</h4>
+<h4>4.4 Modifying legend title and labels</h4>
 <p>The following command change the text style of legend.</p>
 <ul>
 <li><code>legend.title = element_text()</code> : legend title.</li>
 <li><code>legend.text = element_text()</code> : legend categories.</li>
 </ul>
 <p>The detial of <strong>Formatting choices</strong> will be explain in <strong>5.1</strong>.</p>
-<pre class="r"><code>ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+<pre class="r"><code>ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+    # Using a manual scale instead 
+  scale_fill_manual(values=c(&quot;#999999&quot;, &quot;#E69F00&quot;), 
+                    name=&quot;Internet use \nPercentage&quot;,
+                    breaks=c(&quot;OJ&quot;, &quot;VC&quot;),
+                    labels=c(&quot;orange juice&quot;, &quot;vitamin C&quot;))+
   theme(legend.title = element_text(colour=&quot;blue&quot;, size=16, face=&quot;bold&quot;),
         legend.text = element_text(colour=&quot;red&quot;, size = 14, face = &quot;bold&quot;))</code></pre>
 <p><img src="ggplot2_files/figure-html/unnamed-chunk-43-1.png" width="480" /></p>
@@ -771,8 +881,8 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
   xlab(&#39;Percentage of Gross Domestic \n Product Spent on Education&#39;) +
   ggtitle(&#39;Gross Domestic Product and Education&#39;)+
   theme(axis.text=element_text(colour=&quot;blue&quot;, size=10), # change x and y label words
-        axis.title=element_text(colour=&quot;orange&quot;, size=12, face=&quot;bold&quot;), # change x-axis and y-axis title words
-        plot.title=element_text(colour=&quot;red&quot;, size=15, face=&quot;bold&quot;)) # change title words size</code></pre>
+        axis.title=element_text(colour=&quot;orange&quot;, size=12, face=&quot;bold&quot;),            # change x-axis and y-axis title words
+        plot.title=element_text(colour=&quot;red&quot;, size=15, face=&quot;bold&quot;))      # change title words size</code></pre>
 <p><img src="ggplot2_files/figure-html/unnamed-chunk-46-1.png" width="480" /></p>
 </div>
 <div id="removing-a-label" class="section level4">
@@ -786,32 +896,106 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
   theme(axis.text= element_blank(),
         axis.title= element_blank(),
         plot.title= element_blank())    </code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-47-1.png" width="384" /></p>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-47-1.png" width="480" /></p>
 </div>
 <div id="scale" class="section level4">
 <h4>5.4 Scale</h4>
 <p>The <code>coord_trans()</code> function can put data on a logarithmic scale. A logarithmic scale would make the plot much more readable.</p>
 <pre class="r"><code>ggplot(data = CIACountries, aes(y=gdp, x = educ)) +
-geom_point() +
-guides(color=guide_legend(title=&quot;Internet Use&quot;),
-size=guide_legend(title=&#39;Roadway&#39;)) +
-coord_trans(y = &quot;log10&quot;)</code></pre>
+  geom_point() +
+  guides(color=guide_legend(title=&quot;Internet Use&quot;),
+         size=guide_legend(title=&#39;Roadway&#39;)) +
+  coord_trans(y = &quot;log10&quot;)</code></pre>
 <p><img src="ggplot2_files/figure-html/unnamed-chunk-48-1.png" width="480" /></p>
 </div>
 <div id="facets" class="section level4">
 <h4>5.5 Facets</h4>
-<p>The command <code>facet_wrap()</code> can split one graph to mutiple by one character. The following is an example of using <code>facet_wrap()</code> function.</p>
-<pre class="r"><code>ggplot(data = CIACountries, aes(y=gdp, x = educ)) +
-geom_point() +
-guides(color=guide_legend(title=&quot;Internet Use&quot;),
-size=guide_legend(title=&#39;Roadway&#39;)) +
-facet_wrap(~net_users, nrow = 1)</code></pre>
-<p><img src="ggplot2_files/figure-html/unnamed-chunk-49-1.png" width="672" /></p>
+<p>There alsp exist functions that allows the user to split one plot into multiple plots based on a factor included in the dataset.</p>
+<ul>
+<li><code>facet_wrap()</code> arranges a one-dimensional sequence of panels to allow them to cleanly fit on one page.</li>
+<li><code>facet_grid()</code> allows you to form a matrix of rows and columns of panels.</li>
+</ul>
+<blockquote>
+<p><code>facet_wrap()</code> allows user to organise the panels as following:</p>
+</blockquote>
+<pre class="r"><code>ggplot(ToothGrowth, aes(x = dose, y = len)) +
+  geom_boxplot(aes(fill = supp)) +
+  facet_wrap(facets = vars(dose))</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-49-1.png" width="480" /></p>
+<pre class="r"><code>ggplot(ToothGrowth, aes(x = dose, y = len)) +
+  geom_boxplot(aes(fill = supp)) +
+  facet_wrap(facets = vars(dose), ncol=2)</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-50-1.png" width="480" /></p>
+<blockquote>
+<p><code>facet_grid()</code> allows user to organise the panels only by rows (or only by columns):</p>
+</blockquote>
+<p>Split in horizontal direction</p>
+<pre class="r"><code>ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c(&quot;#00AFBB&quot;, &quot;#E7B800&quot;)) +
+  facet_grid(cols = vars(supp))</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-51-1.png" width="576" /></p>
+<p>Split in vertical direction</p>
+<pre class="r"><code>ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c(&quot;#00AFBB&quot;, &quot;#E7B800&quot;)) +
+  facet_grid(rows = vars(supp))</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-52-1.png" width="576" /></p>
+<p>Split in both vertical and horizontal direction</p>
+<pre class="r"><code># Facet by two variables: dose and supp.
+# Rows are dose and columns are supp
+ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c(&quot;#00AFBB&quot;, &quot;#E7B800&quot;)) +
+  facet_grid(rows = vars(dose), cols = vars(supp))</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-53-1.png" width="576" /></p>
+</div>
+</div>
+<div id="multiple-plot" class="section level3">
+<h3>6.Multiple plot</h3>
+<div id="multiple-plot-1" class="section level4">
+<h4>6.1 Multiple plot</h4>
+<p>Although facet can splitting one plot into multiple plots, sometimes users may want to produce a single figure that contains multiple plots using different variables or even different data frames. The <strong>ggpubr</strong> package allows us to combine separate ggplots into a single figure using <code>ggarrange()</code>:</p>
+<pre class="r"><code>install.packages(&quot;ggpubr&quot;)</code></pre>
+<p>You then need to activate by executing the command:</p>
+<pre class="r"><code>library(ggpubr)</code></pre>
+<pre class="r"><code>## 1. Create a box plot (p1)
+p1 &lt;- ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c(&quot;#00AFBB&quot;, &quot;#E7B800&quot;))
+
+# 2. Create a scatter plot (p2)
+p2 &lt;- ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_point(aes(color = net_users, size = roadways)) +
+  guides(color=guide_legend(title=&quot;Internet Use&quot;), size=guide_legend(title=&#39;Roadway&#39;))
+
+
+# 3. Create a box plot (p3)
+p3 &lt;- ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+  scale_fill_grey() + theme_classic() </code></pre>
+<pre class="r"><code>figure &lt;- ggarrange(p1, p2, p3,
+                    labels = c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;), # label the plots 
+                    ncol = 2, nrow = 2)
+figure</code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
+</div>
+<div id="multiple-plot-with-layout" class="section level4">
+<h4>6.1 Multiple plot with layout</h4>
+<p>The nested <code>ggarrange()</code> functions can change column/row span of plots.</p>
+<pre class="r"><code>ggarrange(
+  p3,                # First row with box plot
+  # Second row with box and scatter plots
+  ggarrange(p1, p2, ncol = 2, labels = c(&quot;B&quot;, &quot;C&quot;)), 
+  nrow = 2, 
+  labels = &quot;A&quot;       # Label of the line plot
+  ) </code></pre>
+<p><img src="ggplot2_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
 </div>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -826,6 +1010,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

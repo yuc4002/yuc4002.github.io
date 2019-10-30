@@ -1,10 +1,18 @@
 ---
 title: "Intro to ggplot2: A grammar for graphics"
+
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 4
+theme: lumen
 ---
 
 ### Introducation
 
-`ggplot2` is a graphing library in R that makes beautiful graphs. It is a R package created by R programmer Hadley Wickham. ggplot2 one of the most widely used R packages. Moreover, it builds data graphics incrementally from small pieces of code.
+`ggplot2` is a graphing library in R that makes beautiful graphs. It is a R package created by R programmer Hadley Wickham. ggplot2 is one of the most widely used R packages. Moreover, it builds data graphics incrementally from small pieces of code.
 
 
 The first time you want to use a package, you need to install it. To do so, you type:
@@ -21,7 +29,7 @@ Each time you start an R session you will need to activate the package(s) you ne
 to install them again. 
 
 
-### Data Applied
+### Data Applied 
 
 We will be using the data set CIACountries from the `mdsr` package. First, we have to `intall` and `library` the `mdsr` package.
 
@@ -48,6 +56,25 @@ We can apply the `head` function to havea a look of the CIACountries data table.
 
 ```{r}
 head(CIACountries) %>% knitr::kable()
+```
+
+
+The ToothGrowth data table contains the following seven variables for 60 guinea pigs:
+
++ Tooth length (len)
++ Supplement type (supp)
++ Dose in milligrams/day (dose)
+
+```{r}
+data("ToothGrowth")
+
+# Load data and convert dose to a factor variable
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+
+# add a outlier to the dataset
+ToothGrowth[1,1] <- 60
+
+head(ToothGrowth) %>% knitr::kable()
 ```
 
 ### 1.ggplot Syntax
@@ -297,20 +324,20 @@ Let’s make a box plot by adding command `geom_boxplot()`. Set `notch` equals T
 
 ```{r eval=F}
 # Basic box plot
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()
+ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()
 
 # Notched box plot
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(notch=TRUE)
+ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot(notch=TRUE)
 ```
 
 ```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
 require(gridExtra)
 
 # Basic box plot
-p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()
+p1 <- ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()
 
 # Notched box plot
-p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(notch=TRUE)
+p2 <- ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot(notch=TRUE)
 
 grid.arrange(p1, p2, ncol=2)
 ```
@@ -328,11 +355,11 @@ The command `stat_summary()` can be used to add mean points to a box plot
 
 ```{r eval=F}
 # Change outlier, color, shape and size
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+ggplot(data = ToothGrowth, aes(y=len, x = supp))) + geom_boxplot()+
   geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=4)
 
 # add mean points to a box plot
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+ggplot(data = ToothGrowth, aes(y=len, x = supp))) + geom_boxplot()+
   stat_summary(fun.y=mean, geom="point", shape=23, size=4)
 ```
 
@@ -340,11 +367,11 @@ ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
 require(gridExtra)
 
 # Change outlier, color, shape and size
-p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+p1 <- ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
   geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=4)
 
 # add mean points to a box plot
-p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+p2 <- ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
   stat_summary(fun.y=mean, geom="point", shape=23, size=4)
 
 grid.arrange(p1, p2, ncol=2)
@@ -357,12 +384,12 @@ The points can be added to box plot by comman `geom_dotplot()` and `geom_jitter(
 
 ```{r eval=F}
 # Box plot with dot plot
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
   geom_dotplot(binaxis='y', stackdir='center', dotsize=0.3)
 
 # Box plot with jittered points
 # 0.2 : degree of jitter in x direction
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
   geom_jitter(shape=16, position=position_jitter(0.2))
 ```
 
@@ -370,12 +397,12 @@ ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
 require(gridExtra)
 
 # Box plot with dot plot
-p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+p1 <-ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
   geom_dotplot(binaxis='y', stackdir='center', dotsize=0.3)
 
 # Box plot with jittered points
 # 0.2 : degree of jitter in x direction
-p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
+p2 <- ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
   geom_jitter(shape=16, position=position_jitter(0.2))
 
 grid.arrange(p1, p2, ncol=2)
@@ -387,60 +414,69 @@ grid.arrange(p1, p2, ncol=2)
 The command `scale_x_discrete()` can use to select the box to display on the boxplot. 
 
 ```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot()+
-  scale_x_discrete(limits=c(">0%", ">15%", ">35%"))
+ggplot(data = ToothGrowth, aes(y=len, x = supp)) + geom_boxplot()+
+  scale_x_discrete(limits=c("OJ"))
 ```
 
 
 #### 3.5.1 Change box plot colors automatically
 
-The command `color` is used to set the line color of box plot vary based on state categories.\\
+The command `color` is used to set the line color of box plot vary based on state categories.\n 
 The command `fill` is used to set the box color of box plot vary based on state categories.
 
 ```{r eval=F}
 # Change box plot line colors by groups
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, color=net_users)) + geom_boxplot()
+ggplot(data = ToothGrowth, aes(y=len, x = supp color=supp)) + geom_boxplot()
 
 # Change box plot colors by groups
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()
+ggplot(data = ToothGrowth, aes(y=len, x = supp, fill=supp)) + geom_boxplot()
 ```
 
 ```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
 require(gridExtra)
 
 # Change box plot line colors by groups
-p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, color=net_users)) + geom_boxplot()
+p1 <- ggplot(data = ToothGrowth, aes(y=len, x = supp, color=supp)) + geom_boxplot()
 
 # Change box plot colors by groups
-p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()
+p2 <- ggplot(data = ToothGrowth, aes(y=len, x = supp, fill=supp)) + geom_boxplot()
 
 grid.arrange(p1, p2, ncol=2)
 ```
 
+>Boxplot Side by side
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(data = ToothGrowth, aes(x = dose, y = len)) + geom_boxplot(aes(fill = supp))
+```
+
+
 #### 3.5.2 Change box plot colors manually
 
 The command `color` is used to set the line color of box plot.\\
-The command `fill` is used to set the box color of box plot.\\ 
+The command `fill` is used to set the box color of box plot.\\
 The command `scale_fill_manual` is used to set the box color of of each box.
 
 ```{r eval=F}
 # Use single color
-ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(fill="steelblue", color="black")
+ggplot(ToothGrowth, aes(x = dose, y = len)) + geom_boxplot(fill="steelblue", color="black")
 
 # Use custom color palettes
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
-  scale_fill_manual(values=c('#999999','#E69F00', '#56B4E9','#0072B2', '#D55E00', '#CC79A7'))
+ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
 ```
 
 ```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
 require(gridExtra)
 
 # Use single color
-p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users)) + geom_boxplot(fill="steelblue", color="black")
+p1 <- ggplot(ToothGrowth, aes(x = dose, y = len)) + geom_boxplot(fill="steelblue", color="black")
 
 # Use custom color palettes
-p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
-  scale_fill_manual(values=c('#999999','#E69F00', '#56B4E9','#0072B2', '#D55E00', '#CC79A7'))
+p2 <- ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
 
 grid.arrange(p1, p2, ncol=2)
 ```
@@ -453,11 +489,11 @@ __It is also possible to change manually point and line colors using the functio
 
 ```{r eval=F}
 # use Blues color palettes
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   scale_fill_brewer(palette="Blues") 
 
 # Use grey scale
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   scale_fill_grey() + theme_classic() 
 ```
 
@@ -465,12 +501,12 @@ ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_bo
 require(gridExtra)
 
 # use brewer color palettes
-p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  scale_fill_brewer(palette="Blues") 
+p1 <-ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+  scale_fill_brewer(palette="Blues")  
 
 # Use grey scale
-p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  scale_fill_grey() 
+p2 <- ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+  scale_fill_grey() + theme_classic()
 
 grid.arrange(p1, p2, ncol=2)
 ```
@@ -485,15 +521,15 @@ The command `theme(legend.position="")` can be used to set the position of the l
 
 ```{r eval=F}
 # Move the legend to top
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.position="top")
 
 # Move the legend to bottom
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.position="bottom")
 
 # Remove legend
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.position="none")
 ```
 
@@ -501,15 +537,15 @@ ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_bo
 require(gridExtra)
 
 # Move the legend to top
-p1 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
+p1 <- ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot()+
   theme(legend.position="top")
 
 # Move the legend to bottom
-p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
+p2 <- ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot()+
   theme(legend.position="bottom")
 
 # Remove legend
-p3 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot()+
+p3 <- ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot()+
   theme(legend.position="none")
 
 grid.arrange(p1, p2, p3, ncol=3)
@@ -522,22 +558,22 @@ The command `legend.justification` and `legend.position` can set the position of
 
 ```{r eval=F}
 # Put legend manually 
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.justification=c(0,0), legend.position=c(.5, .5))
 
 # Put bottom-right corner of legend box in bottom-right corner of graph
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.justification=c(1,0), legend.position=c(1,0))
 ```
 
 ```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
 require(gridExtra)
 
-p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+p1 <-ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.justification=c(0,0), legend.position=c(.5, .5))
 
 # Put bottom-right corner of legend box in bottom-right corner of graph
-p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+p2 <- ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   theme(legend.justification=c(1,0), legend.position=c(1,0))
 
 grid.arrange(p1, p2, ncol=2)
@@ -545,76 +581,47 @@ grid.arrange(p1, p2, ncol=2)
 
 
 
-#### 4.2 Reverse the legend order
-
-The following command can reverse the legend order :
-
-+ `guides(fill = guide_legend(reverse=TRUE))`
-+ `scale_fill_discrete(guide = guide_legend(reverse=TRUE))`
+#### 4.2 Modifying the legend box
 
 ```{r eval=F}
-# first menthod to reverse the legend order
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  guides(fill = guide_legend(reverse=TRUE))
+# Remove the background of the ledgend box
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+  theme(legend.background = element_rect())
 
-# second menthod to reverse the legend order
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  scale_fill_discrete(guide = guide_legend(reverse=TRUE))
+# Change part of the color inside the legend
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+  theme(legend.background = element_rect(fill="gray90", size=.5, linetype="dotted"))
 ```
 
 ```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
 require(gridExtra)
 
-# first menthod to reverse the legend order
-p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  guides(fill = guide_legend(reverse=TRUE))
+# Remove the background of the ledgend box
+p1 <-ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+  theme(legend.background = element_rect())
 
-# second menthod to reverse the legend order
-p2 <- ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  scale_fill_discrete(guide = guide_legend(reverse=TRUE))
+# Change part of the color inside the legend
+p2 <-ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+  theme(legend.background = element_rect(fill="gray90", size=.5, linetype="dotted"))
 
 grid.arrange(p1, p2, ncol=2)
 ```
+
 
 #### 4.3 Modifying the text of legend titles and labels
 
+The `scale_fill_manual` command can change the color, legend titles and labels
+
 ```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
   # Using a manual scale instead 
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9","#0072B2", "#D55E00", "#CC79A7"), 
+  scale_fill_manual(values=c("#999999", "#E69F00"), 
                     name="Internet use \nPercentage",
-                    breaks=c(">0%", ">5%", ">25%", ">35%", ">60%", "NA"),
-                    labels=c(">0%", ">5%", ">25%", ">35%", ">60%", ""))
+                    breaks=c("OJ", "VC"),
+                    labels=c("orange juice", "vitamin C"))
 ```
 
-
-#### 4.4 Modifying the legend box
-
-```{r eval=F}
-# Remove the background of the ledgend box
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  theme(legend.background = element_rect())
-
-# Change part of the color inside the legend
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  theme(legend.background = element_rect(fill="gray90", size=.5, linetype="dotted"))
-```
-
-```{r echo=FALSE, fig.height=4, fig.width=10, message=FALSE, warning=FALSE, paged.print=FALSE}
-require(gridExtra)
-
-# Remove the background of the ledgend box
-p1 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  theme(legend.background = element_rect())
-
-# Change part of the color inside the legend
-p2 <-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
-  theme(legend.background = element_rect(fill="gray90", size=.5, linetype="dotted"))
-
-grid.arrange(p1, p2, ncol=2)
-```
-
-#### 4.5 Modifying legend title and labels
+#### 4.4 Modifying legend title and labels
 
 The following command change the text style of legend.
 
@@ -624,7 +631,12 @@ The following command change the text style of legend.
 The detial of __Formatting choices__ will be explain in __5.1__.
 
 ```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
-ggplot(data = CIACountries, aes(y=gdp, x = net_users, fill=net_users)) + geom_boxplot() +
+ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+    # Using a manual scale instead 
+  scale_fill_manual(values=c("#999999", "#E69F00"), 
+                    name="Internet use \nPercentage",
+                    breaks=c("OJ", "VC"),
+                    labels=c("orange juice", "vitamin C"))+
   theme(legend.title = element_text(colour="blue", size=16, face="bold"),
         legend.text = element_text(colour="red", size = 14, face = "bold"))
 ```
@@ -694,8 +706,8 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
   xlab('Percentage of Gross Domestic \n Product Spent on Education') +
   ggtitle('Gross Domestic Product and Education')+
   theme(axis.text=element_text(colour="blue", size=10), # change x and y label words
-        axis.title=element_text(colour="orange", size=12, face="bold"), # change x-axis and y-axis title words
-        plot.title=element_text(colour="red", size=15, face="bold")) # change title words size
+        axis.title=element_text(colour="orange", size=12, face="bold"),            # change x-axis and y-axis title words
+        plot.title=element_text(colour="red", size=15, face="bold"))      # change title words size
 
 ```
 
@@ -703,7 +715,7 @@ ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
 
 The command `element_blank()`, the following example remove the title and axis. This command also can remove the tiltle of legend. 
 
-```{r fig.height=3.5, fig.width=4, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
 # first method to change the Title and Axis Labels
 ggplot(data = CIACountries, aes(y=gdp, x = educ)) + geom_point() +
   ylab('Gross Domestic Product') +
@@ -722,20 +734,116 @@ The `coord_trans()` function can put data on a logarithmic scale. A logarithmic 
 
 ```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
 ggplot(data = CIACountries, aes(y=gdp, x = educ)) +
-geom_point() +
-guides(color=guide_legend(title="Internet Use"),
-size=guide_legend(title='Roadway')) +
-coord_trans(y = "log10")
+  geom_point() +
+  guides(color=guide_legend(title="Internet Use"),
+         size=guide_legend(title='Roadway')) +
+  coord_trans(y = "log10")
 ```
 
 #### 5.5 Facets
 
-The command `facet_wrap()` can split one graph to mutiple by one character. The following is an example of using `facet_wrap()` function.
+There alsp exist functions that allows the user to split one plot into multiple plots based on a factor included in the dataset.
 
-```{r fig.height=4, message=FALSE, warning=FALSE, paged.print=FALSE}
-ggplot(data = CIACountries, aes(y=gdp, x = educ)) +
-geom_point() +
-guides(color=guide_legend(title="Internet Use"),
-size=guide_legend(title='Roadway')) +
-facet_wrap(~net_users, nrow = 1)
++ `facet_wrap()` arranges a one-dimensional sequence of panels to allow them to cleanly fit on one page.
++ `facet_grid()` allows you to form a matrix of rows and columns of panels.
+
+> `facet_wrap()` allows user to organise the panels as following:
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(ToothGrowth, aes(x = dose, y = len)) +
+  geom_boxplot(aes(fill = supp)) +
+  facet_wrap(facets = vars(dose))
 ```
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(ToothGrowth, aes(x = dose, y = len)) +
+  geom_boxplot(aes(fill = supp)) +
+  facet_wrap(facets = vars(dose), ncol=2)
+```
+
+
+> `facet_grid()` allows user to organise the panels only by rows (or only by columns):
+
+Split in horizontal direction
+
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800")) +
+  facet_grid(cols = vars(supp))
+```
+
+Split in vertical direction
+
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800")) +
+  facet_grid(rows = vars(supp))
+```
+
+Split in both vertical and horizontal direction
+
+```{r fig.height=3.5, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE}
+# Facet by two variables: dose and supp.
+# Rows are dose and columns are supp
+ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800")) +
+  facet_grid(rows = vars(dose), cols = vars(supp))
+```
+
+### 6.Multiple plot
+
+#### 6.1 Multiple plot 
+
+Although facet can splitting one plot into multiple plots, sometimes users may want to produce a single figure that contains multiple plots using different variables or even different data frames. The __ggpubr__ package allows us to combine separate ggplots into a single figure using `ggarrange()`:
+
+```{r  eval=F}
+install.packages("ggpubr")
+```
+
+You then need to activate by executing the command:
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(ggpubr)
+```
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+## 1. Create a box plot (p1)
+p1 <- ggplot(ToothGrowth, aes(x = dose, y = len)) + 
+  geom_boxplot(aes(fill = supp), position = position_dodge(0.9)) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+
+# 2. Create a scatter plot (p2)
+p2 <- ggplot(data = CIACountries, aes(y=gdp, x = educ))  + geom_point(aes(color = net_users, size = roadways)) +
+  guides(color=guide_legend(title="Internet Use"), size=guide_legend(title='Roadway'))
+
+
+# 3. Create a box plot (p3)
+p3 <- ggplot(ToothGrowth, aes(x = dose, y = len, fill=supp)) + geom_boxplot() +
+  scale_fill_grey() + theme_classic() 
+```
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+figure <- ggarrange(p1, p2, p3,
+                    labels = c("A", "B", "C"), # label the plots 
+                    ncol = 2, nrow = 2)
+figure
+```
+
+#### 6.1 Multiple plot with layout
+
+The nested `ggarrange()` functions can change column/row span of plots. 
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+ggarrange(
+  p3,                # First row with box plot
+  # Second row with box and scatter plots
+  ggarrange(p1, p2, ncol = 2, labels = c("B", "C")), 
+  nrow = 2, 
+  labels = "A"       # Label of the line plot
+  ) 
+```
+
+

@@ -219,13 +219,13 @@ groupsum(poisons_trans_2$time_trans, poisons_trans_2$poison, poisons_trans_2$tre
 
 ### 3.4.1 Adjusted p-values
 
-```{r}
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 p.adj.compare(poisons$time, poisons$poison, compareall = T) %>%
   kableExtra::kable(align = 'c') %>%
   kableExtra::kable_styling(full_width = F)
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 p.adj.compare(poisons_trans_2$time_trans, poisons_trans_2$poison, compareal=T) %>%
   kableExtra::kable(align = 'c') %>%
   kableExtra::kable_styling(full_width = F)
@@ -234,7 +234,7 @@ p.adj.compare(poisons_trans_2$time_trans, poisons_trans_2$poison, compareal=T) %
 > Based on the reuslt from these two table, we can see that the transformation did a good job. The result from t-test become more accurate than before. Also we can conclude that there's does exist difference between Type 3 and all other groups. Moreover, the table below shows that treatmeant A is different from B and D. 
 
 
-```{r}
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 p.adj.compare(poisons_trans_2$time_trans, poisons_trans_2$treat, compareal=T) %>%
   kableExtra::kable(align = 'c') %>%
   kableExtra::kable_styling(full_width = F)

@@ -5,6 +5,10 @@ navbar:
   left:
     - text: "Intro to ggplot2"
       href: ggplot2.html
+    - text: "Frist handy r package"
+      href: sumcomp.html
+    - text: "Second handy r package"
+      href: preAnalysis.html
   right:
     - icon: fa-envelope fa-lg
       href: mailto:<yuc4002@med.cornell.edu>

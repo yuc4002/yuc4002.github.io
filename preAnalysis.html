@@ -1,0 +1,4491 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yu Cai, Wanyi He" />
+
+
+<title>preAnalysis: Numeric summary and visualization for data preparation</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Yu Cai</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="ggplot2.html">Intro to ggplot2</a>
+</li>
+<li>
+  <a href="sumcomp.html">Frist handy r package</a>
+</li>
+<li>
+  <a href="preAnalysis.html">Second handy r package</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="mailto:&lt;yuc4002@med.cornell.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/yuc4002/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://twitter.com/YuCai22332658">
+    <span class="fa fa-twitter fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">preAnalysis: Numeric summary and visualization for data preparation</h1>
+<h4 class="author">Yu Cai, Wanyi He</h4>
+
+</div>
+
+
+<div id="abstract" class="section level1">
+<h1>1. Abstract</h1>
+<p>This document is going to give a detailed introduction on the <code>preAnalysis</code> package, which is designed for <code>NHANES</code> database. There are several required libraries needed to be loaded before using this package. Example data are from <code>NHANES</code> database and the functionalities of the function in this package will be introduced by performing analysis on the selected datasets. However, some of the functions are also friendly to datasets out of <code>NHANES</code> database. The data are publicly available at: <a href="https://www.cdc.gov/nchs/nhanes.htm" class="uri">https://www.cdc.gov/nchs/nhanes.htm</a>.</p>
+</div>
+<div id="introduction" class="section level1">
+<h1>2. Introduction</h1>
+<p>The <code>preAnalysis</code> package (Cai and He 2019) provides an efficient way to do data preparations for <code>NHANES</code> database. It is an extension of <code>NHANES</code> package. Detailed dataset information and relation graphs will be automatically generated. Some of the functions are also designed for general use. Tables and graphs can be exported to HTML and PDF by using R-markdown.</p>
+<p>Users should have the following packages installed before using the <code>preAnalysis</code> package:</p>
+<p><code>nhanesA</code>, <code>pwr</code>, <code>knitr</code>, <code>igraph</code>, <code>shiny</code>, <code>sqldf</code>, <code>tidyverse</code>, <code>data.table</code>, <code>dplyr</code>, <code>kableExtra</code></p>
+<p>Users need to have <code>preAnalysis</code> package zip file in order to use the package. To load the package using R prompt, enter:</p>
+<p><code>library(preAnalysis)</code></p>
+<p>This document is an overview of the usage of <code>preAnalysis</code> package with real examples. Example datasets come from National Health and Nutrition Examination Survey (NHANES), the category of demographics and laboratory category from 2003 to 2005. Data is accessable both online and in <code>NHANES</code> package. The <code>nhanesA</code> package might be required to access data from <code>NHNAES</code>. Detailed information of example datasets are shown below.</p>
+<ol style="list-style-type: decimal">
+<li>Demographic Variables &amp; Sample Weights (Filename: DEMO_C) (<a href="https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/DEMO_C.htm" class="uri">https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/DEMO_C.htm</a>)</li>
+<li>Demographic Variables &amp; Sample Weights (Filename: DEMO_D) (<a href="https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/DEMO_D.htm" class="uri">https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/DEMO_D.htm</a>)</li>
+</ol>
+<p>Structure of this document:</p>
+<ol style="list-style-type: decimal">
+<li>Abstract. The brief introduction of this vignette document.</li>
+<li>Introduction. Overview of <code>preAnalysis</code> package, including required packages and example datasets.</li>
+<li>Package Functions. Brief introduction of the functions in <code>preAnalysis</code> package.</li>
+<li>Using syntax (SINGLE predictor).</li>
+</ol>
+</div>
+<div id="functions" class="section level1">
+<h1>3. Functions</h1>
+<p>The <code>preAnalysis</code> package contains 6 functions</p>
+<ol style="list-style-type: decimal">
+<li>TABLES</li>
+</ol>
+<p><code>sampleSize</code> provides a table of suggested sample sizes based on a range of user-defined power and effect size.<br />
+<code>showInfo</code> merges multiple tables from <code>NHANES</code> database and changes the labels of both variable names and values into a descriptive form.<br />
+<code>nhanesTableInfo</code> displays the detailed information of any raw data or merged data from <code>NHANES</code> database.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>GRAPHS</li>
+</ol>
+<p><code>relationGraph</code> performs tests for each pairs of variables in the given dataset and generates a numeric summary of the relationships between pairs. Graph option is provided for visualizational purpose.<br />
+<code>tableTwo</code> gives a rough results on the univariate and multivariate analysis. Graph option is provided for visualizational purpose.<br />
+<code>barboxGraph</code> provides a good visualization of both boxplots and barchart.</p>
+</div>
+<div id="using-syntax" class="section level1">
+<h1>4. Using syntax</h1>
+<p><strong>1.</strong> <code>sampleSize</code></p>
+<p>To conduct a clinical trial on prostatitis, as part of the experimental design, suppose that biostatisticians are going to give suggestions on the sample size decision where a detected difference between groups is from 0.1 to 0.2 and a power from 0.8 to 0.9 is required.</p>
+<pre class="r"><code>samplesize &lt;- sampleSize(E.start = 0.1, power.start = 0.8, E.end = NULL, power.end = NULL,  sig.level = 0.05, alternative = &quot;two.sided&quot;)
+samplesize %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+0.81
+</th>
+<th style="text-align:center;">
+0.82
+</th>
+<th style="text-align:center;">
+0.83
+</th>
+<th style="text-align:center;">
+0.84
+</th>
+<th style="text-align:center;">
+0.85
+</th>
+<th style="text-align:center;">
+0.86
+</th>
+<th style="text-align:center;">
+0.87
+</th>
+<th style="text-align:center;">
+0.88
+</th>
+<th style="text-align:center;">
+0.89
+</th>
+<th style="text-align:center;">
+0.9
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0.11
+</td>
+<td style="text-align:center;">
+1332
+</td>
+<td style="text-align:center;">
+1367
+</td>
+<td style="text-align:center;">
+1404
+</td>
+<td style="text-align:center;">
+1443
+</td>
+<td style="text-align:center;">
+1485
+</td>
+<td style="text-align:center;">
+1528
+</td>
+<td style="text-align:center;">
+1575
+</td>
+<td style="text-align:center;">
+1625
+</td>
+<td style="text-align:center;">
+1679
+</td>
+<td style="text-align:center;">
+1737
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.12
+</td>
+<td style="text-align:center;">
+1119
+</td>
+<td style="text-align:center;">
+1149
+</td>
+<td style="text-align:center;">
+1180
+</td>
+<td style="text-align:center;">
+1213
+</td>
+<td style="text-align:center;">
+1247
+</td>
+<td style="text-align:center;">
+1284
+</td>
+<td style="text-align:center;">
+1323
+</td>
+<td style="text-align:center;">
+1365
+</td>
+<td style="text-align:center;">
+1411
+</td>
+<td style="text-align:center;">
+1460
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.13
+</td>
+<td style="text-align:center;">
+954
+</td>
+<td style="text-align:center;">
+979
+</td>
+<td style="text-align:center;">
+1005
+</td>
+<td style="text-align:center;">
+1033
+</td>
+<td style="text-align:center;">
+1063
+</td>
+<td style="text-align:center;">
+1094
+</td>
+<td style="text-align:center;">
+1128
+</td>
+<td style="text-align:center;">
+1164
+</td>
+<td style="text-align:center;">
+1202
+</td>
+<td style="text-align:center;">
+1244
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.14
+</td>
+<td style="text-align:center;">
+822
+</td>
+<td style="text-align:center;">
+844
+</td>
+<td style="text-align:center;">
+867
+</td>
+<td style="text-align:center;">
+891
+</td>
+<td style="text-align:center;">
+917
+</td>
+<td style="text-align:center;">
+944
+</td>
+<td style="text-align:center;">
+972
+</td>
+<td style="text-align:center;">
+1003
+</td>
+<td style="text-align:center;">
+1037
+</td>
+<td style="text-align:center;">
+1073
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:center;">
+716
+</td>
+<td style="text-align:center;">
+735
+</td>
+<td style="text-align:center;">
+755
+</td>
+<td style="text-align:center;">
+776
+</td>
+<td style="text-align:center;">
+799
+</td>
+<td style="text-align:center;">
+822
+</td>
+<td style="text-align:center;">
+847
+</td>
+<td style="text-align:center;">
+874
+</td>
+<td style="text-align:center;">
+903
+</td>
+<td style="text-align:center;">
+934
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.16
+</td>
+<td style="text-align:center;">
+630
+</td>
+<td style="text-align:center;">
+646
+</td>
+<td style="text-align:center;">
+664
+</td>
+<td style="text-align:center;">
+682
+</td>
+<td style="text-align:center;">
+702
+</td>
+<td style="text-align:center;">
+723
+</td>
+<td style="text-align:center;">
+745
+</td>
+<td style="text-align:center;">
+768
+</td>
+<td style="text-align:center;">
+794
+</td>
+<td style="text-align:center;">
+821
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.17
+</td>
+<td style="text-align:center;">
+558
+</td>
+<td style="text-align:center;">
+573
+</td>
+<td style="text-align:center;">
+588
+</td>
+<td style="text-align:center;">
+605
+</td>
+<td style="text-align:center;">
+622
+</td>
+<td style="text-align:center;">
+640
+</td>
+<td style="text-align:center;">
+660
+</td>
+<td style="text-align:center;">
+681
+</td>
+<td style="text-align:center;">
+703
+</td>
+<td style="text-align:center;">
+728
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.18
+</td>
+<td style="text-align:center;">
+498
+</td>
+<td style="text-align:center;">
+511
+</td>
+<td style="text-align:center;">
+525
+</td>
+<td style="text-align:center;">
+539
+</td>
+<td style="text-align:center;">
+555
+</td>
+<td style="text-align:center;">
+571
+</td>
+<td style="text-align:center;">
+588
+</td>
+<td style="text-align:center;">
+607
+</td>
+<td style="text-align:center;">
+627
+</td>
+<td style="text-align:center;">
+649
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.19
+</td>
+<td style="text-align:center;">
+447
+</td>
+<td style="text-align:center;">
+459
+</td>
+<td style="text-align:center;">
+471
+</td>
+<td style="text-align:center;">
+484
+</td>
+<td style="text-align:center;">
+498
+</td>
+<td style="text-align:center;">
+513
+</td>
+<td style="text-align:center;">
+528
+</td>
+<td style="text-align:center;">
+545
+</td>
+<td style="text-align:center;">
+563
+</td>
+<td style="text-align:center;">
+583
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:center;">
+403
+</td>
+<td style="text-align:center;">
+414
+</td>
+<td style="text-align:center;">
+425
+</td>
+<td style="text-align:center;">
+437
+</td>
+<td style="text-align:center;">
+449
+</td>
+<td style="text-align:center;">
+463
+</td>
+<td style="text-align:center;">
+477
+</td>
+<td style="text-align:center;">
+492
+</td>
+<td style="text-align:center;">
+508
+</td>
+<td style="text-align:center;">
+526
+</td>
+</tr>
+</tbody>
+</table>
+<p>Note that the given number in each cells are the minimum suggested sample size for each group to detect the corresponding effect size and power.</p>
+<p><strong>2.</strong> <code>showInfo</code></p>
+<p>People can use <code>NHANES</code> package to find related database and the name of the table. If conducting an observational study on prostatitis, researchers are considering using Prostate Specific Antigen data (<code>L11PSA_C</code>) and Demographic Variables &amp; Sample Weights data (<code>DEMO_C</code>) from 2003 as well as Prostate Specific Antigen data (<code>PSA_D</code>) and Demographic Variables &amp; Sample Weights data (<code>DEMO_D</code>) from 2005. The raw data is shown as below.</p>
+<pre class="r"><code>lab2003 &lt;- nhanes(&#39;DEMO_C&#39;)
+#&gt; Processing SAS dataset DEMO_C     ..
+lab2005 &lt;- nhanes(&#39;DEMO_D&#39;)
+#&gt; Processing SAS dataset DEMO_D     ..
+head(lab2003, n=6) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+SEQN
+</th>
+<th style="text-align:center;">
+SDDSRVYR
+</th>
+<th style="text-align:center;">
+RIDSTATR
+</th>
+<th style="text-align:center;">
+RIDEXMON
+</th>
+<th style="text-align:center;">
+RIAGENDR
+</th>
+<th style="text-align:center;">
+RIDAGEYR
+</th>
+<th style="text-align:center;">
+RIDAGEMN
+</th>
+<th style="text-align:center;">
+RIDAGEEX
+</th>
+<th style="text-align:center;">
+RIDRETH1
+</th>
+<th style="text-align:center;">
+RIDRETH2
+</th>
+<th style="text-align:center;">
+DMQMILIT
+</th>
+<th style="text-align:center;">
+DMDBORN
+</th>
+<th style="text-align:center;">
+DMDCITZN
+</th>
+<th style="text-align:center;">
+DMDYRSUS
+</th>
+<th style="text-align:center;">
+DMDEDUC3
+</th>
+<th style="text-align:center;">
+DMDEDUC2
+</th>
+<th style="text-align:center;">
+DMDEDUC
+</th>
+<th style="text-align:center;">
+DMDSCHOL
+</th>
+<th style="text-align:center;">
+DMDMARTL
+</th>
+<th style="text-align:center;">
+DMDHHSIZ
+</th>
+<th style="text-align:center;">
+INDHHINC
+</th>
+<th style="text-align:center;">
+INDFMINC
+</th>
+<th style="text-align:center;">
+INDFMPIR
+</th>
+<th style="text-align:center;">
+RIDEXPRG
+</th>
+<th style="text-align:center;">
+DMDHRGND
+</th>
+<th style="text-align:center;">
+DMDHRAGE
+</th>
+<th style="text-align:center;">
+DMDHRBRN
+</th>
+<th style="text-align:center;">
+DMDHREDU
+</th>
+<th style="text-align:center;">
+DMDHRMAR
+</th>
+<th style="text-align:center;">
+DMDHSEDU
+</th>
+<th style="text-align:center;">
+SIALANG
+</th>
+<th style="text-align:center;">
+SIAPROXY
+</th>
+<th style="text-align:center;">
+SIAINTRP
+</th>
+<th style="text-align:center;">
+FIALANG
+</th>
+<th style="text-align:center;">
+FIAPROXY
+</th>
+<th style="text-align:center;">
+FIAINTRP
+</th>
+<th style="text-align:center;">
+MIALANG
+</th>
+<th style="text-align:center;">
+MIAPROXY
+</th>
+<th style="text-align:center;">
+MIAINTRP
+</th>
+<th style="text-align:center;">
+AIALANG
+</th>
+<th style="text-align:center;">
+WTINT2YR
+</th>
+<th style="text-align:center;">
+WTMEC2YR
+</th>
+<th style="text-align:center;">
+SDMVPSU
+</th>
+<th style="text-align:center;">
+SDMVSTRA
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+21005
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+19
+</td>
+<td style="text-align:center;">
+232
+</td>
+<td style="text-align:center;">
+233
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+2.44
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+39
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5512.321
+</td>
+<td style="text-align:center;">
+5824.782
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+39
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+21006
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+203
+</td>
+<td style="text-align:center;">
+205
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+7
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+2.47
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+27
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5422.140
+</td>
+<td style="text-align:center;">
+5564.040
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+41
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+21007
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+14
+</td>
+<td style="text-align:center;">
+172
+</td>
+<td style="text-align:center;">
+172
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+8
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+1.60
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+39
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+39764.177
+</td>
+<td style="text-align:center;">
+40591.066
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+35
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+21008
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+17
+</td>
+<td style="text-align:center;">
+208
+</td>
+<td style="text-align:center;">
+209
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+10
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+7
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+7
+</td>
+<td style="text-align:center;">
+2.75
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+40
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5599.499
+</td>
+<td style="text-align:center;">
+5696.751
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+32
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+21009
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+55
+</td>
+<td style="text-align:center;">
+671
+</td>
+<td style="text-align:center;">
+672
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+8
+</td>
+<td style="text-align:center;">
+8
+</td>
+<td style="text-align:center;">
+3.79
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+55
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+97593.679
+</td>
+<td style="text-align:center;">
+97731.727
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+31
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+21010
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+52
+</td>
+<td style="text-align:center;">
+633
+</td>
+<td style="text-align:center;">
+634
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1.24
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+39599.363
+</td>
+<td style="text-align:center;">
+43286.576
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+29
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>head(lab2005, n=6) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+SEQN
+</th>
+<th style="text-align:center;">
+SDDSRVYR
+</th>
+<th style="text-align:center;">
+RIDSTATR
+</th>
+<th style="text-align:center;">
+RIDEXMON
+</th>
+<th style="text-align:center;">
+RIAGENDR
+</th>
+<th style="text-align:center;">
+RIDAGEYR
+</th>
+<th style="text-align:center;">
+RIDAGEMN
+</th>
+<th style="text-align:center;">
+RIDAGEEX
+</th>
+<th style="text-align:center;">
+RIDRETH1
+</th>
+<th style="text-align:center;">
+DMQMILIT
+</th>
+<th style="text-align:center;">
+DMDBORN
+</th>
+<th style="text-align:center;">
+DMDCITZN
+</th>
+<th style="text-align:center;">
+DMDYRSUS
+</th>
+<th style="text-align:center;">
+DMDEDUC3
+</th>
+<th style="text-align:center;">
+DMDEDUC2
+</th>
+<th style="text-align:center;">
+DMDSCHOL
+</th>
+<th style="text-align:center;">
+DMDMARTL
+</th>
+<th style="text-align:center;">
+DMDHHSIZ
+</th>
+<th style="text-align:center;">
+DMDFMSIZ
+</th>
+<th style="text-align:center;">
+INDHHINC
+</th>
+<th style="text-align:center;">
+INDFMINC
+</th>
+<th style="text-align:center;">
+INDFMPIR
+</th>
+<th style="text-align:center;">
+RIDEXPRG
+</th>
+<th style="text-align:center;">
+DMDHRGND
+</th>
+<th style="text-align:center;">
+DMDHRAGE
+</th>
+<th style="text-align:center;">
+DMDHRBRN
+</th>
+<th style="text-align:center;">
+DMDHREDU
+</th>
+<th style="text-align:center;">
+DMDHRMAR
+</th>
+<th style="text-align:center;">
+DMDHSEDU
+</th>
+<th style="text-align:center;">
+SIALANG
+</th>
+<th style="text-align:center;">
+SIAPROXY
+</th>
+<th style="text-align:center;">
+SIAINTRP
+</th>
+<th style="text-align:center;">
+FIALANG
+</th>
+<th style="text-align:center;">
+FIAPROXY
+</th>
+<th style="text-align:center;">
+FIAINTRP
+</th>
+<th style="text-align:center;">
+MIALANG
+</th>
+<th style="text-align:center;">
+MIAPROXY
+</th>
+<th style="text-align:center;">
+MIAINTRP
+</th>
+<th style="text-align:center;">
+AIALANG
+</th>
+<th style="text-align:center;">
+WTINT2YR
+</th>
+<th style="text-align:center;">
+WTMEC2YR
+</th>
+<th style="text-align:center;">
+SDMVPSU
+</th>
+<th style="text-align:center;">
+SDMVSTRA
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+31127
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+12
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.75
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+21
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+6434.950
+</td>
+<td style="text-align:center;">
+6571.396
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+44
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+31128
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+132
+</td>
+<td style="text-align:center;">
+132
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+7
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+8
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+0.77
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+47
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+9081.701
+</td>
+<td style="text-align:center;">
+8987.042
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+52
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+31129
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+15
+</td>
+<td style="text-align:center;">
+189
+</td>
+<td style="text-align:center;">
+190
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+10
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+10
+</td>
+<td style="text-align:center;">
+10
+</td>
+<td style="text-align:center;">
+2.71
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5316.895
+</td>
+<td style="text-align:center;">
+5586.719
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+51
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+31130
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+85
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1.99
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+85
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+29960.840
+</td>
+<td style="text-align:center;">
+34030.995
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+46
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+31131
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+44
+</td>
+<td style="text-align:center;">
+535
+</td>
+<td style="text-align:center;">
+536
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+4.65
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+36
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+26457.708
+</td>
+<td style="text-align:center;">
+26770.585
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+48
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+31132
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+70
+</td>
+<td style="text-align:center;">
+842
+</td>
+<td style="text-align:center;">
+843
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+11
+</td>
+<td style="text-align:center;">
+5.00
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+70
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+32961.510
+</td>
+<td style="text-align:center;">
+35315.539
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+52
+</td>
+</tr>
+</tbody>
+</table>
+<p>As shown in the raw data above, the values are displayed as it stored (e.g, integers for levels) and the variables are displayed without descriptive labels. It is not friendly for users who want to combine multiple tables together for further analysis.</p>
+<p>The <code>showInfo</code> function is designed for merging multiple tables at the same time by just entering the name of the datasets from <code>NHNAES</code> database. The function will automatically search for the corresponding datasets on NHANES websites. Descriptive labels for variable names and level names will be displayed instead of stored values.</p>
+<pre class="r"><code>merged &lt;- showInfo(DEMO_C, DEMO_D)
+#&gt; Processing SAS dataset DEMO_C     ..
+#&gt; Processing SAS dataset DEMO_D     ..
+head(merged) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F) %&gt;%
+  kableExtra::column_spec(1, width = 13, bold = T, border_right = T, background = &quot;lightyellow&quot;)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+SEQN
+</th>
+<th style="text-align:center;">
+SDDSRVYR
+</th>
+<th style="text-align:center;">
+RIDSTATR
+</th>
+<th style="text-align:center;">
+RIDEXMON
+</th>
+<th style="text-align:center;">
+RIAGENDR
+</th>
+<th style="text-align:center;">
+RIDAGEYR
+</th>
+<th style="text-align:center;">
+RIDAGEMN
+</th>
+<th style="text-align:center;">
+RIDAGEEX
+</th>
+<th style="text-align:center;">
+RIDRETH1
+</th>
+<th style="text-align:center;">
+DMQMILIT
+</th>
+<th style="text-align:center;">
+DMDBORN
+</th>
+<th style="text-align:center;">
+DMDCITZN
+</th>
+<th style="text-align:center;">
+DMDYRSUS
+</th>
+<th style="text-align:center;">
+DMDEDUC3
+</th>
+<th style="text-align:center;">
+DMDEDUC2
+</th>
+<th style="text-align:center;">
+DMDSCHOL
+</th>
+<th style="text-align:center;">
+DMDMARTL
+</th>
+<th style="text-align:center;">
+DMDHHSIZ
+</th>
+<th style="text-align:center;">
+INDHHINC
+</th>
+<th style="text-align:center;">
+INDFMINC
+</th>
+<th style="text-align:center;">
+INDFMPIR
+</th>
+<th style="text-align:center;">
+RIDEXPRG
+</th>
+<th style="text-align:center;">
+DMDHRGND
+</th>
+<th style="text-align:center;">
+DMDHRAGE
+</th>
+<th style="text-align:center;">
+DMDHRBRN
+</th>
+<th style="text-align:center;">
+DMDHREDU
+</th>
+<th style="text-align:center;">
+DMDHRMAR
+</th>
+<th style="text-align:center;">
+DMDHSEDU
+</th>
+<th style="text-align:center;">
+SIALANG
+</th>
+<th style="text-align:center;">
+SIAPROXY
+</th>
+<th style="text-align:center;">
+SIAINTRP
+</th>
+<th style="text-align:center;">
+FIALANG
+</th>
+<th style="text-align:center;">
+FIAPROXY
+</th>
+<th style="text-align:center;">
+FIAINTRP
+</th>
+<th style="text-align:center;">
+MIALANG
+</th>
+<th style="text-align:center;">
+MIAPROXY
+</th>
+<th style="text-align:center;">
+MIAINTRP
+</th>
+<th style="text-align:center;">
+AIALANG
+</th>
+<th style="text-align:center;">
+WTINT2YR
+</th>
+<th style="text-align:center;">
+WTMEC2YR
+</th>
+<th style="text-align:center;">
+SDMVPSU
+</th>
+<th style="text-align:center;">
+SDMVSTRA
+</th>
+<th style="text-align:center;">
+RIDRETH2
+</th>
+<th style="text-align:center;">
+DMDEDUC
+</th>
+<th style="text-align:center;">
+DMDFMSIZ
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+21005
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+Both Interviewed and MEC examine
+</td>
+<td style="text-align:center;">
+November 1 through April 30
+</td>
+<td style="text-align:center;">
+Male
+</td>
+<td style="text-align:center;">
+19
+</td>
+<td style="text-align:center;">
+232
+</td>
+<td style="text-align:center;">
+233
+</td>
+<td style="text-align:center;">
+Non-Hispanic Black
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+Citizen by birth or naturalizati
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+11th Grade
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+In school
+</td>
+<td style="text-align:center;">
+Never married
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+$25,000 to $34,999
+</td>
+<td style="text-align:center;">
+$25,000 to $34,999
+</td>
+<td style="text-align:center;">
+2.44
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Male
+</td>
+<td style="text-align:center;">
+39
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+College Graduate or above
+</td>
+<td style="text-align:center;">
+Divorced
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+5512.321
+</td>
+<td style="text-align:center;">
+5824.782
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+39
+</td>
+<td style="text-align:center;">
+Non-Hispanic Black
+</td>
+<td style="text-align:center;">
+Less Than High School
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+21006
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+Both Interviewed and MEC examine
+</td>
+<td style="text-align:center;">
+May 1 through October 31
+</td>
+<td style="text-align:center;">
+Female
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+203
+</td>
+<td style="text-align:center;">
+205
+</td>
+<td style="text-align:center;">
+Non-Hispanic Black
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+Citizen by birth or naturalizati
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+11th Grade
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+On vacation from school (between
+</td>
+<td style="text-align:center;">
+Never married
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+$35,000 to $44,999
+</td>
+<td style="text-align:center;">
+$25,000 to $34,999
+</td>
+<td style="text-align:center;">
+2.47
+</td>
+<td style="text-align:center;">
+Yes, positive lab pregnancy test
+</td>
+<td style="text-align:center;">
+Female
+</td>
+<td style="text-align:center;">
+27
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+9-11th Grade (Includes 12th grad
+</td>
+<td style="text-align:center;">
+Never married
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+5422.140
+</td>
+<td style="text-align:center;">
+5564.040
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+Non-Hispanic Black
+</td>
+<td style="text-align:center;">
+Less Than High School
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+21007
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+Both Interviewed and MEC examine
+</td>
+<td style="text-align:center;">
+November 1 through April 30
+</td>
+<td style="text-align:center;">
+Female
+</td>
+<td style="text-align:center;">
+14
+</td>
+<td style="text-align:center;">
+172
+</td>
+<td style="text-align:center;">
+172
+</td>
+<td style="text-align:center;">
+Non-Hispanic White
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+Citizen by birth or naturalizati
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+8th Grade
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+In school
+</td>
+<td style="text-align:center;">
+Never married
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+$25,000 to $34,999
+</td>
+<td style="text-align:center;">
+1.60
+</td>
+<td style="text-align:center;">
+SP not pregnant at exam
+</td>
+<td style="text-align:center;">
+Male
+</td>
+<td style="text-align:center;">
+39
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+Some College or AA degree
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+39764.177
+</td>
+<td style="text-align:center;">
+40591.066
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+35
+</td>
+<td style="text-align:center;">
+Non-Hispanic White
+</td>
+<td style="text-align:center;">
+Less Than High School
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+21008
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+Both Interviewed and MEC examine
+</td>
+<td style="text-align:center;">
+May 1 through October 31
+</td>
+<td style="text-align:center;">
+Male
+</td>
+<td style="text-align:center;">
+17
+</td>
+<td style="text-align:center;">
+208
+</td>
+<td style="text-align:center;">
+209
+</td>
+<td style="text-align:center;">
+Non-Hispanic Black
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+Citizen by birth or naturalizati
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+10th Grade
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+In school
+</td>
+<td style="text-align:center;">
+Never married
+</td>
+<td style="text-align:center;">
+7
+</td>
+<td style="text-align:center;">
+$75,000 and Over
+</td>
+<td style="text-align:center;">
+$35,000 to $44,999
+</td>
+<td style="text-align:center;">
+2.75
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Female
+</td>
+<td style="text-align:center;">
+40
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+Some College or AA degree
+</td>
+<td style="text-align:center;">
+Never married
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+5599.499
+</td>
+<td style="text-align:center;">
+5696.751
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+32
+</td>
+<td style="text-align:center;">
+Non-Hispanic Black
+</td>
+<td style="text-align:center;">
+Less Than High School
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+21009
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+Both Interviewed and MEC examine
+</td>
+<td style="text-align:center;">
+May 1 through October 31
+</td>
+<td style="text-align:center;">
+Male
+</td>
+<td style="text-align:center;">
+55
+</td>
+<td style="text-align:center;">
+671
+</td>
+<td style="text-align:center;">
+672
+</td>
+<td style="text-align:center;">
+Non-Hispanic White
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+Citizen by birth or naturalizati
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+High School Grad/GED or Equivale
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Married
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+$45,000 to $54,999
+</td>
+<td style="text-align:center;">
+$45,000 to $54,999
+</td>
+<td style="text-align:center;">
+3.79
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Male
+</td>
+<td style="text-align:center;">
+55
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+High School Grad/GED or equivale
+</td>
+<td style="text-align:center;">
+Married
+</td>
+<td style="text-align:center;">
+Some College or AA degree
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+97593.679
+</td>
+<td style="text-align:center;">
+97731.727
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+31
+</td>
+<td style="text-align:center;">
+Non-Hispanic White
+</td>
+<td style="text-align:center;">
+High School Diploma (including G
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+21010
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+Both Interviewed and MEC examine
+</td>
+<td style="text-align:center;">
+May 1 through October 31
+</td>
+<td style="text-align:center;">
+Female
+</td>
+<td style="text-align:center;">
+52
+</td>
+<td style="text-align:center;">
+633
+</td>
+<td style="text-align:center;">
+634
+</td>
+<td style="text-align:center;">
+Non-Hispanic White
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+Citizen by birth or naturalizati
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Some College or AA degree
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Living with partner
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+$25,000 to $34,999
+</td>
+<td style="text-align:center;">
+$15,000 to $19,999
+</td>
+<td style="text-align:center;">
+1.24
+</td>
+<td style="text-align:center;">
+SP not pregnant at exam
+</td>
+<td style="text-align:center;">
+Male
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+Born in 50 US States or Washingt
+</td>
+<td style="text-align:center;">
+Less Than 9th Grade
+</td>
+<td style="text-align:center;">
+Living with partner
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+English
+</td>
+<td style="text-align:center;">
+39599.363
+</td>
+<td style="text-align:center;">
+43286.576
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+29
+</td>
+<td style="text-align:center;">
+Non-Hispanic White
+</td>
+<td style="text-align:center;">
+More Than High School
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>3.</strong> <code>nhanesTableInfo</code></p>
+<p>After combining the searched datasets, researcher probably would like to have a general look at the detailed information in the entire dataset. The <code>nhanesTableInfo</code> function is going to display the information, including variable names, types and descriptions, as well as mean (standard deviation) and median (min, max) for continuous variables and number of levels for categorical variables. Number of missing values and proportion of missingness will also be displayed. Note that <code>detail = T</code> is the command to display the full detailed information of each variable.</p>
+<pre class="r"><code>nhanesTablesInfo(merged, detail=F) %&gt;%head(7)%&gt;%
+ kableExtra::kable(align = &#39;l&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F) %&gt;%
+  kableExtra::column_spec(1, width = 12, bold = T, border_right = T, background = &quot;lightyellow&quot;) </code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+No
+</th>
+<th style="text-align:left;">
+Variable
+</th>
+<th style="text-align:left;">
+Type
+</th>
+<th style="text-align:left;">
+Label
+</th>
+<th style="text-align:left;">
+Values
+</th>
+<th style="text-align:left;">
+Missing
+</th>
+<th style="text-align:left;">
+Valid
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+1
+</td>
+<td style="text-align:left;">
+SEQN
+</td>
+<td style="text-align:left;">
+integer
+</td>
+<td style="text-align:left;">
+Respondent sequence number
+</td>
+<td style="text-align:left;">
+Range: 21005 - 41474
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+2
+</td>
+<td style="text-align:left;">
+SDDSRVYR
+</td>
+<td style="text-align:left;">
+integer
+</td>
+<td style="text-align:left;">
+Data Release Number
+</td>
+<td style="text-align:left;">
+Mean(sd): 3.51(0.5)
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+3
+</td>
+<td style="text-align:left;">
+RIDSTATR
+</td>
+<td style="text-align:left;">
+factor
+</td>
+<td style="text-align:left;">
+Interview/Examination Status
+</td>
+<td style="text-align:left;">
+2 distinct values.
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+4
+</td>
+<td style="text-align:left;">
+RIDEXMON
+</td>
+<td style="text-align:left;">
+factor
+</td>
+<td style="text-align:left;">
+Six month time period
+</td>
+<td style="text-align:left;">
+2 distinct values.
+</td>
+<td style="text-align:left;">
+877 (4.28%)
+</td>
+<td style="text-align:left;">
+19593 (95.72%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+5
+</td>
+<td style="text-align:left;">
+RIAGENDR
+</td>
+<td style="text-align:left;">
+factor
+</td>
+<td style="text-align:left;">
+Gender
+</td>
+<td style="text-align:left;">
+<ol style="list-style-type: decimal">
+<li>Male 2. Female
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+6
+</td>
+<td style="text-align:left;">
+RIDAGEYR
+</td>
+<td style="text-align:left;">
+integer
+</td>
+<td style="text-align:left;">
+Age at Screening Adjudicated - Recode
+</td>
+<td style="text-align:left;">
+Mean(sd): 29.02(24.73)
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+7
+</td>
+<td style="text-align:left;">
+RIDAGEMN
+</td>
+<td style="text-align:left;">
+integer
+</td>
+<td style="text-align:left;">
+Age in Months - Recode
+</td>
+<td style="text-align:left;">
+Mean(sd): 340.51(284.26)
+</td>
+<td style="text-align:left;">
+393 (1.92%)
+</td>
+<td style="text-align:left;">
+20077 (98.08%)
+</td>
+</tr>
+</tbody>
+</table></li>
+</ol>
+<pre class="r"><code>nhanesTablesInfo(merged, detail = T, showfactor = 10)[[1]] %&gt;%head(14)%&gt;%
+  kableExtra::kable(align = &#39;l&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F) %&gt;%
+  kableExtra::column_spec(1, width = 12, bold = T, border_right = T, background = &quot;lightyellow&quot;) </code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Variable
+</th>
+<th style="text-align:left;">
+Values
+</th>
+<th style="text-align:left;">
+Overall
+</th>
+<th style="text-align:left;">
+Valid
+</th>
+<th style="text-align:left;">
+Missing
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+SEQN
+</td>
+<td style="text-align:left;">
+Range
+</td>
+<td style="text-align:left;">
+21005 - 41474
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+SDDSRVYR
+</td>
+<td style="text-align:left;">
+Mean(SD)
+</td>
+<td style="text-align:left;">
+3.51 (0.5)
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+</td>
+<td style="text-align:left;">
+Median(min, max)
+</td>
+<td style="text-align:left;">
+4 (3,4)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+RIDSTATR
+</td>
+<td style="text-align:left;">
+Both Interviewed and MEC examine
+</td>
+<td style="text-align:left;">
+19593 (95.72%)
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+</td>
+<td style="text-align:left;">
+Interviewed Only
+</td>
+<td style="text-align:left;">
+877 (4.28%)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+RIDEXMON
+</td>
+<td style="text-align:left;">
+November 1 through April 30
+</td>
+<td style="text-align:left;">
+9431 (46.07%)
+</td>
+<td style="text-align:left;">
+19593 (95.72%)
+</td>
+<td style="text-align:left;">
+877 (4.28%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+</td>
+<td style="text-align:left;">
+May 1 through October 31
+</td>
+<td style="text-align:left;">
+10162 (49.64%)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+RIAGENDR
+</td>
+<td style="text-align:left;">
+Male
+</td>
+<td style="text-align:left;">
+10050 (49.1%)
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+</td>
+<td style="text-align:left;">
+Female
+</td>
+<td style="text-align:left;">
+10420 (50.9%)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+RIDAGEYR
+</td>
+<td style="text-align:left;">
+Mean(SD)
+</td>
+<td style="text-align:left;">
+29.02 (24.73)
+</td>
+<td style="text-align:left;">
+20470 (100%)
+</td>
+<td style="text-align:left;">
+0 (0%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+</td>
+<td style="text-align:left;">
+Median(min, max)
+</td>
+<td style="text-align:left;">
+19 (0,85)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+RIDAGEMN
+</td>
+<td style="text-align:left;">
+Mean(SD)
+</td>
+<td style="text-align:left;">
+340.51 (284.26)
+</td>
+<td style="text-align:left;">
+20077 (98.08%)
+</td>
+<td style="text-align:left;">
+393 (1.92%)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+</td>
+<td style="text-align:left;">
+Median(min, max)
+</td>
+<td style="text-align:left;">
+230 (0,1019)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 12; font-weight: bold;background-color: lightyellow !important;border-right:1px solid;">
+RIDAGEEX
+</td>
+<td style="text-align:left;">
+Mean(SD)
+</td>
+<td style="text-align:left;">
+339.29 (282.87)
+</td>
+<td style="text-align:left;">
+19207 (93.83%)
+</td>
+<td style="text-align:left;">
+1263 (6.17%)
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>
+nhanesTablesInfo(merged, detail = T, showfactor = 10)[[2]] %&gt;%
+  head(7)%&gt;%
+  kableExtra::kable(align = &#39;l&#39;) </code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+SEQN–Respondent sequence number
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SDDSRVYR–Data Release Number
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RIDSTATR–Interview/Examination Status
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RIDEXMON–Six month time period
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RIAGENDR–Gender
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RIDAGEYR–Age at Screening Adjudicated - Recode
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RIDAGEMN–Age in Months - Recode
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>4.</strong> <code>relationGraph</code></p>
+<p>The merged dataset is appropriate for the analysis by using <code>nhanesTableInfo</code> function to have a general look at the detailed information. It is necessary to have a basic idea about the relationships or associations between each pairs of the variables before starting the main analysis, for example, to identify potential confounders. The <code>relationGraph</code> function provides a table of pairs that associations are significant at a user-defined statistical significance level. By setting <code>graph = T</code>, a relation graph will be displayed with the table. Note that the graph might not be clear if there exists too many associations. The dashed edges denote that the p-value of the comparisons are greater than 0.05 while solid edges are less than 0.05. If setting <code>show.p = T</code>, the graph is going to display the p-values on each edge. In order to display a clear graph, only <code>L11PSA_C</code> will be used as the example for this part. Set a significance level as 0.01.</p>
+<pre class="r"><code>merged1 &lt;- showInfo(L11PSA_C)
+#&gt; Processing SAS dataset L11PSA_C   ..
+relationGraph(merged1, alpha = 0.01, graph = T, show.p = T, edge.curved = 0.5, vertex.label.cex = 0.8, vertex.shape = &#39;circle&#39;, vertex.size = 25, edge.width = 1.5, margin = 0.05)</code></pre>
+<p><img src="preAnalysis_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre><code>#&gt; [[1]]
+#&gt;     varA   varB p.value                Test
+#&gt; 1  LBXP1  LBXP2   0.000        Pearson Test
+#&gt; 2  LBXP1  LBDP3   0.000        Pearson Test
+#&gt; 3 KIQ115 KIQ185   0.003 Fisher&#39;s Exact Test
+#&gt; 4 KIQ190 KIQ195   0.005 Fisher&#39;s Exact Test
+#&gt; 5  LBXP1 KIQ115   0.006       Wilcoxon test
+#&gt; 
+#&gt; [[2]]
+#&gt; NULL</code></pre>
+<p><strong>5.</strong> <code>tableTwo</code></p>
+<p>With the purpose of primarily identifying the potential confounders, the <code>tableTwo</code> function is going to perform some simple univariate and multivariate analysis for the given datasets.</p>
+<pre class="r"><code>tableTwo(formula = INDFMPIR ~ RIAGENDR+ DMDBORN + RIDAGEMN, table = merged, Multi=T) %&gt;%
+  kableExtra::kable(align = &#39;l&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Variable
+</th>
+<th style="text-align:left;">
+p.value
+</th>
+<th style="text-align:left;">
+CI_25
+</th>
+<th style="text-align:left;">
+CI_75
+</th>
+<th style="text-align:left;">
+Method
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+RIAGENDR: Gender
+</td>
+<td style="text-align:left;">
+0.0012
+</td>
+<td style="text-align:left;">
+0.029
+</td>
+<td style="text-align:left;">
+0.1184
+</td>
+<td style="text-align:left;">
+T-Test
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DMDBORN: Country of Birth - Recode
+</td>
+<td style="text-align:left;">
+0.0000
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+ANOVA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RIDAGEMN: Age in Months - Recode
+</td>
+<td style="text-align:left;">
+0.0000
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+Linear Model
+</td>
+</tr>
+</tbody>
+</table></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<pre class="r"><code>reuslt&lt;-tableTwo(formula = RIAGENDR ~ INDFMPIR + DMDBORN + RIDAGEMN, table = merged, Multi=F) 
+reuslt[[1]]%&gt;%
+  kableExtra::kable(align = &#39;l&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Values
+</th>
+<th style="text-align:left;">
+Coefficient
+</th>
+<th style="text-align:left;">
+OR.Ratio
+</th>
+<th style="text-align:left;">
+CI_25
+</th>
+<th style="text-align:left;">
+CI_75.
+</th>
+<th style="text-align:left;">
+p.value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+INDFMPIR: Family PIR
+</td>
+<td style="text-align:left;">
+-0.029
+</td>
+<td style="text-align:left;">
+0.971
+</td>
+<td style="text-align:left;">
+0.954
+</td>
+<td style="text-align:left;">
+0.989
+</td>
+<td style="text-align:left;">
+0.0012255
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DMDBORN: Born in Mexico
+</td>
+<td style="text-align:left;">
+-0.082
+</td>
+<td style="text-align:left;">
+0.922
+</td>
+<td style="text-align:left;">
+0.836
+</td>
+<td style="text-align:left;">
+1.016
+</td>
+<td style="text-align:left;">
+0.1024340
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DMDBORN: Born Elsewhere
+</td>
+<td style="text-align:left;">
+0.001
+</td>
+<td style="text-align:left;">
+1.001
+</td>
+<td style="text-align:left;">
+0.892
+</td>
+<td style="text-align:left;">
+1.123
+</td>
+<td style="text-align:left;">
+0.9900387
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DMDBORN: Refused
+</td>
+<td style="text-align:left;">
+0.245
+</td>
+<td style="text-align:left;">
+1.277
+</td>
+<td style="text-align:left;">
+0.281
+</td>
+<td style="text-align:left;">
+6.486
+</td>
+<td style="text-align:left;">
+0.7488012
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RIDAGEMN: Age in Months - Recode
+</td>
+<td style="text-align:left;">
+0.000
+</td>
+<td style="text-align:left;">
+1.000
+</td>
+<td style="text-align:left;">
+1.000
+</td>
+<td style="text-align:left;">
+1.000
+</td>
+<td style="text-align:left;">
+0.8210720
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>reuslt[[2]]</code></pre>
+<p><img src="preAnalysis_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><strong>6.</strong> <code>barboxGraph</code></p>
+<p>The <code>barboxGraph</code> function is the upgrade version of <code>barchart</code> and <code>boxplot</code> functions from <code>sumcomp</code> package (Yu and He, 2019), which combines the two function into one with command <code>boxplot = T</code> or <code>barchart = T</code> to display the plots. Since only cleaned data are able to perform on <code>barchart</code> and <code>boxplot</code> functions, the upgraded <code>boxbarGraph</code> function is friendly to uncleaned data. However, if data are not qualified for doing tests, error messages will be generated.</p>
+</div>
+<div id="reference" class="section level1">
+<h1>5. Reference</h1>
+<ul>
+<li>“NHANES Questionnaires, Datasets, and Related Documentation.” Centers for Disease Control and Prevention, Centers for Disease Control and Prevention, wwwn.cdc.gov/nchs/nhanes/.</li>
+<li>Endres, Christopher J. Introducing NhanesA, 16 Oct. 2018, cran.r-project.org/web/packages/nhanesA/vignettes/Introducing_nhanesA.html. “NHANES Questionnaires, Datasets, and Related Documentation.” Centers for Disease Control and Prevention, Centers for Disease Control and Prevention, wwwn.cdc.gov/nchs/nhanes/.</li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2542 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yu Cai, Wanyi He" />
+
+
+<title>Sumcomp: Numerical and graphical summaries by groups</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Yu Cai</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="ggplot2.html">Intro to ggplot2</a>
+</li>
+<li>
+  <a href="sumcomp.html">Frist handy r package</a>
+</li>
+<li>
+  <a href="preAnalysis.html">Second handy r package</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="mailto:&lt;yuc4002@med.cornell.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/yuc4002/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://twitter.com/YuCai22332658">
+    <span class="fa fa-twitter fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Sumcomp: Numerical and graphical summaries by groups</h1>
+<h4 class="author">Yu Cai, Wanyi He</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>1. Introduction</h1>
+<p>The <code>sumcomp</code> package (Cai and He 2019) provides an efficient way to summarize continuous response variables by categorical explanatory variable(s) by creating nice tables and graphs to display the general information of the data as well as the results of inference. Tables and graphs can be exported to HTML and PDF by using R-markdown.</p>
+<p>Users should have the following packages installed before using the <code>sumcomp</code> package:</p>
+<p><code>multcomp</code>, <code>ggfortify</code>, <code>data.table</code>, <code>MASS</code>, <code>shiny</code>, <code>ggplot2</code>, <code>tidyverse</code></p>
+<p>Users need to have <code>sumcomp</code> package zip file in order to use the package. To load the package using R prompt, enter:</p>
+<p><code>library(sumcomp)</code></p>
+<p>This document is an overview of the usage of <code>sumcomp</code> package with real examples. Example datasets come from <code>boot</code> package called <code>poisons</code> (Box, G.E.P. and Cox, D.R. (1964) An analysis of transformations (with Discussion). Journal of the Royal Statistical Society, B, 26, 211–252.) and a teaching dataset <code>NOERmouse</code> from Weill Cornell Medicine.</p>
+<p>Structure of this document:</p>
+<ol style="list-style-type: decimal">
+<li>Introduction. Overview of <code>sumcomp</code> package, including required packages and example datasets.</li>
+<li>Package Functions. Brief introduction of the functions in <code>sumcomp</code> package.</li>
+<li>Using syntax (SINGLE predictor).</li>
+</ol>
+</div>
+<div id="functions" class="section level1">
+<h1>2. Functions</h1>
+<p>The <code>sumcomp</code> package contains 8 functions</p>
+<ol style="list-style-type: decimal">
+<li>TABLES</li>
+</ol>
+<p><code>groupsum</code> provides a summary table of continuous response variable by categorical explanatory variables. <code>p.adj.compare</code> provides a summary table of adjusted p-valuesfor pairwise comparisons. <code>compare.2.factors</code> provides a specific contrast test results for 2 factors contains 2 groups in each.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>GRAPHS</li>
+</ol>
+<p><code>boxcomp</code> provides a good visualization of boxplots for either 1 predictor or 2 predictors. <code>barchart</code> provides a good visualization of bar chart for either 1 predictor or 2 predictors. <code>pairplot</code> provides a good visualization of two-sample paired test for paired data.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>INFERENCE</li>
+</ol>
+<p><code>assumption.check</code> performs the normality diagnosis. <code>boxcoxTrans</code> performs the data transformation by boxcox procedure.</p>
+</div>
+<div id="using-syntax" class="section level1">
+<h1>3. Using syntax</h1>
+<div id="example-data" class="section level2">
+<h2>Example Data</h2>
+<p>Example dataset is from ‘boot’ package call ‘poison’ (Box, G.E.P. and Cox, D.R., 1964). It contains 48 records and 3 attributes. Here display the first 10 rows of the data.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center;">
+time
+</th>
+<th style="text-align:center;">
+poison
+</th>
+<th style="text-align:center;">
+treat
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+0.31
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.45
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.46
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.43
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.36
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.29
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.40
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.23
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.22
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.21
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+A
+</td>
+</tr>
+</tbody>
+</table>
+Variables in this data frame are:
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;border-right:1px solid;font-weight: bold;">
+Variable Name
+</td>
+<td style="text-align:center;width: 20; background-color: lightyellow !important;font-weight: bold;">
+Relationship
+</td>
+<td style="text-align:center;width: 13; background-color: white !important;font-weight: bold;">
+Variable Type
+</td>
+<td style="text-align:center;width: 20; background-color: lightyellow !important;font-weight: bold;">
+Description
+</td>
+</tr>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;border-right:1px solid;">
+time
+</td>
+<td style="text-align:center;width: 20; background-color: lightyellow !important;">
+Response
+</td>
+<td style="text-align:center;width: 13; background-color: white !important;">
+Continuous
+</td>
+<td style="text-align:center;width: 20; background-color: lightyellow !important;">
+Survival time of the animal in units of 10 hours
+</td>
+</tr>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;border-right:1px solid;">
+poison
+</td>
+<td style="text-align:center;width: 20; background-color: lightyellow !important;">
+Explanatory
+</td>
+<td style="text-align:center;width: 13; background-color: white !important;">
+Factor
+</td>
+<td style="text-align:center;width: 20; background-color: lightyellow !important;">
+Factor with levels 1, 2 and 3 giving the type of poison used
+</td>
+</tr>
+<tr>
+<td style="text-align:center;width: 13; font-weight: bold;border-right:1px solid;">
+treat
+</td>
+<td style="text-align:center;width: 20; background-color: lightyellow !important;">
+Explanatory
+</td>
+<td style="text-align:center;width: 13; background-color: white !important;">
+Factor
+</td>
+<td style="text-align:center;width: 20; background-color: lightyellow !important;">
+Factor with levels A, B, C and D giving the treatment
+</td>
+</tr>
+</tbody>
+</table>
+<p>We are interested in the effects on animal survival time with different types of poison used. Different treatments given on different poisons might have different effects on animal survival time. Detecting such effect is also our purpose.</p>
+</div>
+<div id="numerical-summary" class="section level2">
+<h2>3.1 Numerical Summary</h2>
+<div id="one-predictor-poison" class="section level3">
+<h3>3.1.1 ONE predictor: poison</h3>
+<p>The original data summaries are shown as below:</p>
+<pre class="r"><code>groupsum(poisons$time, poisons$poison) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+poison
+</th>
+<th style="text-align:center;">
+n
+</th>
+<th style="text-align:center;">
+n.complete
+</th>
+<th style="text-align:center;">
+mean.sd
+</th>
+<th style="text-align:center;">
+median.IQR
+</th>
+<th style="text-align:center;">
+pval.anova
+</th>
+<th style="text-align:center;">
+pval.KW
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+0.62 +/- 0.21
+</td>
+<td style="text-align:center;">
+0.62 (0.45, 0.73)
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+0.54 +/- 0.29
+</td>
+<td style="text-align:center;">
+0.42 (0.36, 0.64)
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+0.28 +/- 0.06
+</td>
+<td style="text-align:center;">
+0.27 (0.23, 0.32)
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="two-predictors-poison-and-treat" class="section level3">
+<h3>3.1.2 TWO predictors: poison AND treat</h3>
+<p>The original data summaries are shown as below:</p>
+<pre class="r"><code>groupsum(poisons$time, poisons$poison, poisons$treat) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+poison
+</th>
+<th style="text-align:center;">
+treat
+</th>
+<th style="text-align:center;">
+n
+</th>
+<th style="text-align:center;">
+n.complete
+</th>
+<th style="text-align:center;">
+mean.sd
+</th>
+<th style="text-align:center;">
+median.IQR
+</th>
+<th style="text-align:center;">
+pval.anova
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.41 +/- 0.07
+</td>
+<td style="text-align:center;">
+0.44 (0.4, 0.45)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.32 +/- 0.08
+</td>
+<td style="text-align:center;">
+0.32 (0.27, 0.37)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.21 +/- 0.02
+</td>
+<td style="text-align:center;">
+0.22 (0.2, 0.22)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+B
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.88 +/- 0.16
+</td>
+<td style="text-align:center;">
+0.85 (0.8, 0.94)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+B
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.82 +/- 0.34
+</td>
+<td style="text-align:center;">
+0.76 (0.58, 1)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+B
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.34 +/- 0.05
+</td>
+<td style="text-align:center;">
+0.34 (0.3, 0.37)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+C
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.57 +/- 0.16
+</td>
+<td style="text-align:center;">
+0.54 (0.44, 0.66)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+C
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.38 +/- 0.06
+</td>
+<td style="text-align:center;">
+0.38 (0.34, 0.41)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+C
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.24 +/- 0.01
+</td>
+<td style="text-align:center;">
+0.24 (0.23, 0.24)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+D
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.61 +/- 0.11
+</td>
+<td style="text-align:center;">
+0.64 (0.58, 0.67)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+D
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.67 +/- 0.27
+</td>
+<td style="text-align:center;">
+0.64 (0.52, 0.79)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+D
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+0.32 +/- 0.03
+</td>
+<td style="text-align:center;">
+0.32 (0.31, 0.34)
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="data-diagnosis" class="section level2">
+<h2>3.2 Data Diagnosis</h2>
+<p>In this part, the data diagnosis will be performed. We are going to to check whether the data violates the normality assumptions or not in order to determine whether a transformation is necessary to be proceed, repectively.</p>
+<div id="assumption-check-one-predictor" class="section level3">
+<h3>3.2.1 Assumption Check (ONE predictor)</h3>
+<pre class="r"><code>assumption.check(poisons$time, poisons$poison)[1] %&gt;%  
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="kable_wrapper table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:center;">
+Check
+</th>
+<th style="text-align:center;">
+Test Applied
+</th>
+<th style="text-align:center;">
+p-values
+</th>
+<th style="text-align:center;">
+Recommend Result
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Normality Check
+</td>
+<td style="text-align:center;">
+Shapiro-Wilk Normality Test
+</td>
+<td style="text-align:center;">
+0.001
+</td>
+<td style="text-align:center;">
+Not Normal
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Variance Check
+</td>
+<td style="text-align:center;">
+Bartlett Test of Homogeneity of Variances
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+Variance is not constant
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>assumption.check(poisons$time, poisons$poison)[2]
+#&gt; [[1]]</code></pre>
+<p><img src="sumcomp_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<blockquote>
+<p>For ONE predictor, both of the table and graphs show a violation to normality assumptions: data are not normally distributed and variance are not constant. Thus, a data transformation will be proceeded as below.</p>
+</blockquote>
+</div>
+<div id="data-transformation-one-predictor" class="section level3">
+<h3>3.2.2 Data Transformation (ONE predictor)</h3>
+<p>The transformed data is shown below:</p>
+<pre class="r"><code>poisons_trans &lt;- boxcoxTrans(poisons$time, poisons$poison)
+head(poisons_trans) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+time
+</th>
+<th style="text-align:center;">
+poison
+</th>
+<th style="text-align:center;">
+time_trans
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+0.31
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2.019217
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.45
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.614628
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.46
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.593475
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.43
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.659277
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.36
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1.845944
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.29
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2.101654
+</td>
+</tr>
+</tbody>
+</table>
+<p>After transformtion, we check the normality assumptions one more time.</p>
+<pre class="r"><code>assumption.check(poisons_trans$time_trans, poisons_trans$poison)[1] %&gt;% 
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="kable_wrapper table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:center;">
+Check
+</th>
+<th style="text-align:center;">
+Test Applied
+</th>
+<th style="text-align:center;">
+p-values
+</th>
+<th style="text-align:center;">
+Recommend Result
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Normality Check
+</td>
+<td style="text-align:center;">
+Shapiro-Wilk Normality Test
+</td>
+<td style="text-align:center;">
+0.652
+</td>
+<td style="text-align:center;">
+Approximately Normal
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Variance Check
+</td>
+<td style="text-align:center;">
+Bartlett Test of Homogeneity of Variances
+</td>
+<td style="text-align:center;">
+0.222
+</td>
+<td style="text-align:center;">
+Variance is constant
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>assumption.check(poisons_trans$time_trans, poisons_trans$poison)[2] 
+#&gt; [[1]]</code></pre>
+<p><img src="sumcomp_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<blockquote>
+<p>Both of the tables and plots show a normal distribution of the residual and a constant variance. Data <code>poisons_trans</code> for single predictor is ready for the rest of the analysis.</p>
+</blockquote>
+</div>
+<div id="assumption-check-two-predictors" class="section level3">
+<h3>3.2.3 Assumption Check (TWO predictors)</h3>
+<pre class="r"><code>assumption.check(poisons$time, poisons$poison, poisons$treat)[1]%&gt;%
+ kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="kable_wrapper table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:center;">
+Check
+</th>
+<th style="text-align:center;">
+Test Applied
+</th>
+<th style="text-align:center;">
+p-values
+</th>
+<th style="text-align:center;">
+Recommend Result
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Normality Check
+</td>
+<td style="text-align:center;">
+Shapiro-Wilk Normality Test
+</td>
+<td style="text-align:center;">
+0.002
+</td>
+<td style="text-align:center;">
+Not Normal
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Variance Check
+</td>
+<td style="text-align:center;">
+Bartlett Test of Homogeneity of Variances
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+Variance is not constant
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>assumption.check(poisons$time, poisons$poison, poisons$treat)[2]
+#&gt; [[1]]</code></pre>
+<p><img src="sumcomp_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<blockquote>
+<p>For TWO predictors, both of the table and graphs show a violation to normality assumptions: data are not normally distributed and variance are not constant. Thus, a data transformation will be proceeded as below.</p>
+</blockquote>
+</div>
+<div id="data-transformation-two-predictors" class="section level3">
+<h3>3.2.4 Data transformation (TWO predictors)</h3>
+<p>The transformed data is shown below:</p>
+<pre class="r"><code>poisons_trans_2&lt;-boxcoxTrans(poisons$time, poisons$poison, poisons$treat)
+head(poisons_trans_2) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+time
+</th>
+<th style="text-align:center;">
+poison
+</th>
+<th style="text-align:center;">
+treat
+</th>
+<th style="text-align:center;">
+time_trans
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+0.31
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+2.552176
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.45
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+1.894218
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.46
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+1.861203
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.43
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+1.964379
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.36
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+2.264425
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+0.29
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+2.692041
+</td>
+</tr>
+</tbody>
+</table>
+<p>After transformtion, we check the normality assumptions one more time.</p>
+<pre class="r"><code>assumption.check(poisons_trans_2$time_trans, poisons_trans_2$poison, poisons_trans_2$`poisons$treat`)[1] %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="kable_wrapper table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:center;">
+Check
+</th>
+<th style="text-align:center;">
+Test Applied
+</th>
+<th style="text-align:center;">
+p-values
+</th>
+<th style="text-align:center;">
+Recommend Result
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Normality Check
+</td>
+<td style="text-align:center;">
+Shapiro-Wilk Normality Test
+</td>
+<td style="text-align:center;">
+0.553
+</td>
+<td style="text-align:center;">
+Approximately Normal
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Variance Check
+</td>
+<td style="text-align:center;">
+Bartlett Test of Homogeneity of Variances
+</td>
+<td style="text-align:center;">
+0.254
+</td>
+<td style="text-align:center;">
+Variance is constant
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>assumption.check(poisons_trans_2$time_trans, poisons_trans_2$poison, poisons_trans_2$`poisons$treat`)[2]
+#&gt; [[1]]</code></pre>
+<p><img src="sumcomp_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<blockquote>
+<p>Both of the tables and plots show a normal distribution of the residual and a constant variance. Data <code>poisons_trans_2</code> for 2 predictors is ready for the rest of the analysis.</p>
+</blockquote>
+</div>
+</div>
+<div id="data-summary" class="section level2">
+<h2>3.3 Data Summary</h2>
+<div id="summary-table-one-predictor" class="section level3">
+<h3>3.3.1 Summary Table (ONE predictor)</h3>
+<pre class="r"><code>groupsum(poisons_trans_2$time_trans, poisons_trans_2$poison) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+poison
+</th>
+<th style="text-align:center;">
+n
+</th>
+<th style="text-align:center;">
+n.complete
+</th>
+<th style="text-align:center;">
+mean.sd
+</th>
+<th style="text-align:center;">
+median.IQR
+</th>
+<th style="text-align:center;">
+pval.anova
+</th>
+<th style="text-align:center;">
+pval.KW
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+1.59 +/- 0.43
+</td>
+<td style="text-align:center;">
+1.46 (1.29, 1.89)
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+1.9 +/- 0.66
+</td>
+<td style="text-align:center;">
+2 (1.44, 2.28)
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+2.9 +/- 0.52
+</td>
+<td style="text-align:center;">
+2.86 (2.52, 3.27)
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="summary-table-two-predictors" class="section level3">
+<h3>3.3.2 Summary Table (TWO predictors)</h3>
+<pre class="r"><code>groupsum(poisons_trans_2$time_trans, poisons_trans_2$poison, poisons_trans_2$treat) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+poison
+</th>
+<th style="text-align:center;">
+treat
+</th>
+<th style="text-align:center;">
+n
+</th>
+<th style="text-align:center;">
+n.complete
+</th>
+<th style="text-align:center;">
+mean.sd
+</th>
+<th style="text-align:center;">
+median.IQR
+</th>
+<th style="text-align:center;">
+pval.anova
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2.07 +/- 0.33
+</td>
+<td style="text-align:center;">
+1.93 (1.89, 2.11)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2.57 +/- 0.52
+</td>
+<td style="text-align:center;">
+2.48 (2.22, 2.83)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+A
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+3.51 +/- 0.31
+</td>
+<td style="text-align:center;">
+3.42 (3.33, 3.6)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+B
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1.13 +/- 0.16
+</td>
+<td style="text-align:center;">
+1.14 (1.06, 1.2)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+B
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1.29 +/- 0.42
+</td>
+<td style="text-align:center;">
+1.28 (1.01, 1.56)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+B
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2.42 +/- 0.27
+</td>
+<td style="text-align:center;">
+2.42 (2.2, 2.64)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+C
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1.64 +/- 0.35
+</td>
+<td style="text-align:center;">
+1.67 (1.4, 1.91)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+C
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2.22 +/- 0.27
+</td>
+<td style="text-align:center;">
+2.2 (2.04, 2.38)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+C
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+3.19 +/- 0.14
+</td>
+<td style="text-align:center;">
+3.19 (3.11, 3.27)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+D
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1.52 +/- 0.26
+</td>
+<td style="text-align:center;">
+1.43 (1.37, 1.57)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+D
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+1.51 +/- 0.5
+</td>
+<td style="text-align:center;">
+1.45 (1.23, 1.73)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+D
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2.47 +/- 0.16
+</td>
+<td style="text-align:center;">
+2.49 (2.39, 2.57)
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="inference" class="section level2">
+<h2>3.4 Inference</h2>
+<div id="adjusted-p-values" class="section level3">
+<h3>3.4.1 Adjusted p-values</h3>
+<pre class="r"><code>p.adj.compare(poisons$time, poisons$poison, compareall = T) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties
+
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties
+
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+pm.p
+</th>
+<th style="text-align:center;">
+pm.p.Tukey
+</th>
+<th style="text-align:center;">
+pm.p.holm
+</th>
+<th style="text-align:center;">
+wilcoxon.p
+</th>
+<th style="text-align:center;">
+wilcoxon.p.holm
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2 - 1
+</td>
+<td style="text-align:center;">
+0.420
+</td>
+<td style="text-align:center;">
+0.588
+</td>
+<td style="text-align:center;">
+0.420
+</td>
+<td style="text-align:center;">
+0.118
+</td>
+<td style="text-align:center;">
+0.118
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3 - 1
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3 - 2
+</td>
+<td style="text-align:center;">
+0.002
+</td>
+<td style="text-align:center;">
+0.002
+</td>
+<td style="text-align:center;">
+0.004
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>p.adj.compare(poisons_trans_2$time_trans, poisons_trans_2$poison, compareal=T) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties
+
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties
+
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+pm.p
+</th>
+<th style="text-align:center;">
+pm.p.Tukey
+</th>
+<th style="text-align:center;">
+pm.p.holm
+</th>
+<th style="text-align:center;">
+wilcoxon.p
+</th>
+<th style="text-align:center;">
+wilcoxon.p.holm
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2 - 1
+</td>
+<td style="text-align:center;">
+0.127
+</td>
+<td style="text-align:center;">
+0.251
+</td>
+<td style="text-align:center;">
+0.127
+</td>
+<td style="text-align:center;">
+0.118
+</td>
+<td style="text-align:center;">
+0.118
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3 - 1
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3 - 2
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Based on the reuslt from these two table, we can see that the transformation did a good job. The result from t-test become more accurate than before. Also we can conclude that there’s does exist difference between Type 3 and all other groups. Moreover, the table below shows that treatmeant A is different from B and D.</p>
+</blockquote>
+<pre class="r"><code>p.adj.compare(poisons_trans_2$time_trans, poisons_trans_2$treat, compareal=T) %&gt;%
+  kableExtra::kable(align = &#39;c&#39;) %&gt;%
+  kableExtra::kable_styling(full_width = F)
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties
+
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties
+
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties
+
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties
+
+#&gt; Warning in wilcox.test.default(xi, xj, paired = paired): cannot compute
+#&gt; exact p-value with ties</code></pre>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+pm.p
+</th>
+<th style="text-align:center;">
+pm.p.Tukey
+</th>
+<th style="text-align:center;">
+pm.p.holm
+</th>
+<th style="text-align:center;">
+wilcoxon.p
+</th>
+<th style="text-align:center;">
+wilcoxon.p.holm
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+B - A
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+<td style="text-align:center;">
+0.001
+</td>
+<td style="text-align:center;">
+0.005
+</td>
+<td style="text-align:center;">
+0.003
+</td>
+<td style="text-align:center;">
+0.019
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C - A
+</td>
+<td style="text-align:center;">
+0.223
+</td>
+<td style="text-align:center;">
+0.539
+</td>
+<td style="text-align:center;">
+0.447
+</td>
+<td style="text-align:center;">
+0.247
+</td>
+<td style="text-align:center;">
+0.495
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+D - A
+</td>
+<td style="text-align:center;">
+0.003
+</td>
+<td style="text-align:center;">
+0.012
+</td>
+<td style="text-align:center;">
+0.015
+</td>
+<td style="text-align:center;">
+0.009
+</td>
+<td style="text-align:center;">
+0.046
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C - B
+</td>
+<td style="text-align:center;">
+0.016
+</td>
+<td style="text-align:center;">
+0.046
+</td>
+<td style="text-align:center;">
+0.062
+</td>
+<td style="text-align:center;">
+0.024
+</td>
+<td style="text-align:center;">
+0.097
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+D - B
+</td>
+<td style="text-align:center;">
+0.391
+</td>
+<td style="text-align:center;">
+0.852
+</td>
+<td style="text-align:center;">
+0.447
+</td>
+<td style="text-align:center;">
+0.312
+</td>
+<td style="text-align:center;">
+0.495
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+D - C
+</td>
+<td style="text-align:center;">
+0.061
+</td>
+<td style="text-align:center;">
+0.242
+</td>
+<td style="text-align:center;">
+0.184
+</td>
+<td style="text-align:center;">
+0.112
+</td>
+<td style="text-align:center;">
+0.336
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="graphical-summary" class="section level2">
+<h2>3.5 Graphical Summary</h2>
+<p>The graphical summaries are designed to give a direct visualization of specific characteristics of the data. Boxplot and bar chart are the two main plots in this package. Boxplot is designed to display the <strong>minimum</strong>, <strong>first quartile</strong>, <strong>median</strong>, <strong>third quartile</strong> and <strong>maximum</strong> from the bottom to the top, respectively. Note that the difference between 3rd quantile and 1st quantile is the <strong>IQR</strong>. The points inside the boxplots are showing the mean values of the corresponding levels. The barchart shows the mean values as well as the standard errors of each levels. <strong>Set ‘normal = T’, the global p-value will be calculated from ANOVA test while from Kruskal-Wallis test if ‘normal = F’</strong>.</p>
+<div id="boxcomp-one-predictor" class="section level3">
+<h3>3.5.1 boxcomp (ONE predictor)</h3>
+<pre class="r"><code>boxcomp(poisons$time, poisons$poison, normal = T, xname = &quot;Poison Type&quot;, 
+        xlabels = c(&quot;Type 1&quot;, &quot;Type 2&quot;, &quot;Type 3&quot;), xlabelfont = &#39;Times New Roman&#39;, 
+        yname = &quot;Time&quot;, fillcol1 = c(&#39;coral&#39;,&#39;coral1&#39;,&#39;coral2&#39;), edgecol = &#39;coral4&#39;, 
+        titlesize = 14, main = &quot;BOXPLOT of ANIMAL SURVIVAL TIMES&quot;, 
+        caption = &quot;*Data from &#39;boot&#39; library in R&quot;)</code></pre>
+<p><img src="sumcomp_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<blockquote>
+<p>Since the data had already been transformed to follow the normality assumption, we are supposed to use the ANOVA test for displaying the global p-value. P&lt;0.0001 shows that the difference of survival time among different types of poisons are significant at a 0.05 significance level. The boxplot shows an approximately monotone decreasing in survival time moving from Type 1 to Type 3 poisons. However, a post-hoc test should be performed to obtain a more specific information of the difference between groups.</p>
+</blockquote>
+</div>
+<div id="boxcomp-two-predictors" class="section level3">
+<h3>3.5.2 boxcomp (TWO predictors)</h3>
+<pre class="r"><code>boxcomp(poisons$time, poisons$poison, poisons$treat, normal = T, xname = &quot;Poison Type&quot;, 
+        yname = &quot;Time&quot;, xlabels = c(&quot;Type 1&quot;, &quot;Type 2&quot;, &quot;Type 3&quot;), 
+        xlabelfont = &#39;Times New Roman&#39;, fillcol2 = c(&#39;coral&#39;,&#39;coral1&#39;,&#39;coral2&#39;,&#39;coral3&#39;), 
+        edgecol =&#39;coral4&#39;, main = &quot;BOXPLOT of ANIMAL SURVIVAL TIMES&quot;, titlesize = 14, 
+        legname = &quot;Treatment Type&quot;, subtitle = &#39;Poison Type versus Treatment Type&#39;, 
+        subcol = &#39;grey48&#39;, caption=&quot;*Data from &#39;boot&#39; library in R&quot;, globalp_pos = 1.3, 
+        pvalpos = 0.1, pointpos = 0.76)</code></pre>
+<p><img src="sumcomp_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<blockquote>
+<p>Since the data is right-skewed, we are supposed to use the non-parametric tests by setting normal = F. The three p-values in groups show that the effect of different treatments on different poisons are significantly different at a 0.05 significance level, indicating an interaction between poison types and treatment types. The boxes in each groups visually show a possible significant difference of survival time among different treatments. However, a post-hoc test should be performed to obtain a more specific information of the difference between groups.</p>
+</blockquote>
+</div>
+<div id="barchart-one-predictor" class="section level3">
+<h3>3.5.3 barchart (ONE predictor)</h3>
+<pre class="r"><code>barchart(poisons$time, poisons$poison, normal = T, xname = &quot;Poison Type&quot;, 
+         xlabels = c(&quot;Type 1&quot;, &quot;Type 2&quot;, &quot;Type 3&quot;), xlabelfont = &#39;Times New Roman&#39;, 
+         yname = &quot;Time&quot;, fillcol1 = c(&#39;coral&#39;,&#39;coral1&#39;,&#39;coral2&#39;), edgecol =&#39;coral4&#39;, 
+         titlesize = 14, main = &quot;BARCHART of ANIMAL SURVIVAL TIMES&quot;, 
+         caption=&quot;*Data from &#39;boot&#39; library in R&quot;, globalp_pos = 1)</code></pre>
+<p><img src="sumcomp_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<blockquote>
+<p>The global p-value &lt; 0.0001 in the barchart shows that the differences between levels are significant at a 0.05 significance level. The bar heights are monotone decreasing from Type 1 to Type 3 poison, showing that type 1 has the highest mean survival time while type 1 has the lowest. The length of the errorbars indicate that type 2 poison has the largest standard errors comparing to type 1 and type 3 since it has the longest errorbar. However, a post-hoc test should be performed to obtain a more specific information of the difference between groups.</p>
+</blockquote>
+</div>
+<div id="barchart-two-predictors" class="section level3">
+<h3>3.5.4 barchart (TWO predictors)</h3>
+<pre class="r"><code>barchart(poisons$time, poisons$poison, poisons$treat, normal = T, xname = &quot;Poison Type&quot;, 
+         xlabels = c(&quot;Type 1&quot;, &quot;Type 2&quot;, &quot;Type 3&quot;), xlabelfont = &#39;Times New Roman&#39;, 
+         yname = &quot;Time&quot;, fillcol2 = c(&#39;coral&#39;,&#39;coral1&#39;,&#39;coral2&#39;, &#39;coral3&#39;), 
+         edgecol =&#39;coral4&#39;, titlesize = 14, main = &quot;BARCHART of ANIMAL SURVIVAL TIMES&quot;, 
+         legname = &quot;Treatment Type&quot;, subtitle = &#39;Poison Type versus Treatment Type&#39;, 
+         subcol = &#39;grey48&#39;, caption=&quot;*Data from &#39;boot&#39; library in R&quot;, pvalpos = -0.05)</code></pre>
+<p><img src="sumcomp_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<blockquote>
+<p>The p-values of three poison types give the same information as the p-values from boxplot do. The height of treatment B is the highest in all three types of poisons, meaning that type B might be the most effective treatment to all three types of poisons. The errorbar of treatment B is the longest comparing to other treatment types which indicates that treatment B also has the largest standard error. However, a post-hoc test should be performed to obtain a more specific information of the difference between groups.</p>
+</blockquote>
+</div>
+</div>
+</div>
+<div id="using-syntax-paired-data" class="section level1">
+<h1>4. Using syntax (Paired data)</h1>
+<p><code>pairplot</code> function is for generating two-sample paired plot for matched data. Data should be exactly TWO groups/levels in order to calculate the p-value from two-sample T-test.</p>
+<p><strong>Example Data Background</strong></p>
+<blockquote>
+<p>ERα plays a role in regulating appetite. ERα knockout mice eat more than wild type mice and become obese with white adipose inflammation. In the current experiment, Dr. Levin compared wild type (WT) and nuclear only ERα (NOER) mice. The NOER mice cannot signal via the membrane but only through the nucleus. It is important to determine whether membranous ERα function controls appetite. There were 5 mice in each of the two groups. In the spreadsheet (top), one sees Food intake (in gms) over 12 weeks in WT vs. NOER mice. The amount listed is the amount of food consumed over the week per mouse. Body weights for WT and NOER mice are seen at the bottom. The food intake and body weights were measured for each mouse each week from weeks 1 to 12. Food intake for wild type (WT) mice in week 1 and week 12 will be given as an example. Record with same PairNum are regarded as a pair. Data from WCM Spring 2019 - Foundation of Biomedical Application.</p>
+</blockquote>
+<div id="data-overview" class="section level2">
+<h2>4.1 Data overview</h2>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+PairNum
+</th>
+<th style="text-align:center;">
+Week1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+40
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+43
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+37
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+35
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+45
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+PairNum
+</th>
+<th style="text-align:center;">
+Week12
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+42
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+36
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+37
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+30
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+35
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="paired-plot" class="section level2">
+<h2>4.2 Paired Plot</h2>
+<pre class="r"><code>pairplot.2(Week1, Week12, linecol = c(&#39;lightblue&#39;,&#39;deepskyblue2&#39;,&#39;deepskyblue4&#39;,
+           &#39;blue&#39;,&#39;darkblue&#39;), main = &quot;PAIRED PLOT OF FOOD INTAKE&quot;, 
+           titlesize = 17, titlecol = &#39;dodgerblue4&#39;, xname = &#39;WEEK&#39;, 
+           xlabels = c(&#39;1&#39;,&#39;12&#39;), yname = &#39;FOOD INTAKE (gm)&#39;, ynamesize = 15, 
+           subtitle = &#39;Paired graph of two sample t test&#39;, subsize = 13, 
+           subface = &#39;bold&#39;, subfont = &#39;Times New Roman&#39;, subcol = &#39;grey48&#39;, 
+           capsize = 9, capfont = &#39;Times New Roman&#39;, legname = &#39;Pair ID&#39;, 
+           leglab = c(&#39;Pair 1&#39;,&#39;Pair 2&#39;,&#39;Pair 3&#39;,&#39;Pair 4&#39;,&#39;Pair 5&#39;),
+           caption = &#39;Note: Data from WCM Spring 2019 - Foundation of Biomedical Application&#39;, 
+           globalp_pos = 48, psize = 6)</code></pre>
+<p><img src="sumcomp_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<blockquote>
+<p>The paired plot of the given dataset gave a p-value = 0.145, indicating that the difference between groups are not significant at a 0.05 significance level. Three pairs show a negative slope, one group show a positive slope while the rest one shows no changes. There is no obvious pattern/trend in the plot thus a significant conclusion might not be given.</p>
+</blockquote>
+</div>
+</div>
+<div id="reference" class="section level1">
+<h1>5. Reference</h1>
+<blockquote>
+<p>“Writing an R Package from Scratch.” Not So Standard Deviations, 30 Apr. 2014, hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/.</p>
+</blockquote>
+<blockquote>
+<p>Wickham, Hadley. R Packages. OReilly Media, 2015.</p>
+</blockquote>
+<blockquote>
+<p>Joint, Marginal, and Conditional Probabilities, tinyheero.github.io/jekyll/update/2015/07/26/making-your-first-R-package.html. Wickham, Hadley. R Packages. OReilly Media, 2015.</p>
+</blockquote>
+<blockquote>
+<p>Add pair lines in R, Retrieved from <a href="https://stackoverflow.com/questions/35226008/add-pair-lines-in-r" class="uri">https://stackoverflow.com/questions/35226008/add-pair-lines-in-r</a></p>
+</blockquote>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

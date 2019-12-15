@@ -5,7 +5,7 @@ navbar:
   left:
     - text: "Intro to ggplot2"
       href: ggplot2.html
-    - text: "Frist handy r package"
+    - text: "First handy r package"
       href: sumcomp.html
     - text: "Second handy r package"
       href: preAnalysis.html

@@ -1,7 +1,7 @@
 
 <h1>Yu Cai</h1>
 
-<h3 style="color:grey;"> <i>Weill Cornell Medicine</i></h3>
+<h3 style="color:grey;"> <i>Cornell University</i></h3>
 
 <br>
 
